@@ -1,0 +1,193 @@
+---
+
+---
+
+<nav
+  class="fixed top-8 left-1/2 z-50 flex w-7xl -translate-x-1/2 items-center justify-between px-8 py-5"
+>
+  <!-- Title -->
+  <div class="z-50 flex flex-col leading-none">
+    <span class="text-[2vw] font-bold tracking-wide text-white">Dafe's</span>
+    <span
+      id="title-burger"
+      class="-mt-0.5 translate-x-4 text-[2vw] font-bold tracking-wide text-yellow-400"
+      >burger</span
+    >
+  </div>
+
+  <!-- Menu button -->
+  <button
+    id="menu-btn"
+    class="relative z-50 flex size-[3vw] cursor-pointer items-center justify-center rounded-full bg-yellow-400 transition-transform hover:scale-110"
+    aria-label="Menu"
+  >
+    <svg
+      class="size-[1.4vw]"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="black"
+      stroke-width="2.5"
+      stroke-linecap="round"
+    >
+      <line class="menu-line-top" x1="3" y1="6" x2="21" y2="6"></line>
+      <line class="menu-line-mid" x1="3" y1="12" x2="21" y2="12"></line>
+      <line class="menu-line-bot" x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </button>
+</nav>
+
+<!-- Full Screen Menu Overlay -->
+<div
+  id="menu-overlay"
+  class="pointer-events-none fixed inset-0 z-40 flex flex-col items-center justify-center bg-yellow-400 opacity-0"
+  style="clip-path: circle(0px at 0px 0px);"
+>
+  <ul
+    class="flex flex-col gap-8 text-center text-[4vw] font-black text-black uppercase"
+  >
+    <li
+      class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
+    >
+      Home
+    </li>
+    <li
+      class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
+    >
+      Menu
+    </li>
+    <li
+      class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
+    >
+      About Us
+    </li>
+    <li
+      class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
+    >
+      Contact
+    </li>
+  </ul>
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  const menuBtn = document.querySelector("#menu-btn");
+  const menuOverlay = document.querySelector("#menu-overlay");
+  const menuLinks = document.querySelectorAll(".menu-link");
+  const lineTop = document.querySelector(".menu-line-top");
+  const lineMid = document.querySelector(".menu-line-mid");
+  const lineBot = document.querySelector(".menu-line-bot");
+  const titleBurger = document.querySelector("#title-burger");
+
+  let isMenuOpen = false;
+
+  menuBtn?.addEventListener("click", () => {
+    isMenuOpen = !isMenuOpen;
+
+    // Get the exact center coordinate of the button
+    const rect = menuBtn.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    if (isMenuOpen) {
+      // ── Open Menu ──
+      // First ensure opacity is 1 and clickable, but clipped to just the button coords
+      gsap.set(menuOverlay, {
+        opacity: 1,
+        pointerEvents: "auto",
+        clipPath: `circle(0px at ${x}px ${y}px)`,
+      });
+
+      const tl = gsap.timeline();
+      // Animate the circle out to cover the whole screen (150% handles diagonals)
+      tl.to(menuOverlay, {
+        clipPath: `circle(150% at ${x}px ${y}px)`,
+        duration: 0.8,
+        ease: "expo.inOut",
+      });
+
+      // Stagger in the links
+      tl.to(
+        menuLinks,
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3",
+      );
+
+      // Morph hamburger to 'X'
+      gsap.to(lineTop, {
+        y: 6,
+        rotation: 45,
+        transformOrigin: "center",
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+      gsap.to(lineMid, { opacity: 0, duration: 0.2 });
+      gsap.to(lineBot, {
+        y: -6,
+        rotation: -45,
+        transformOrigin: "center",
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+
+      // Change 'burger' text color to black to contrast the yellow background
+      gsap.to(titleBurger, {
+        color: "#000000",
+        duration: 0.4,
+        delay: 0.5,
+        ease: "power2.inOut",
+      });
+    } else {
+      // ── Close Menu ──
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(menuOverlay, { opacity: 0, pointerEvents: "none" });
+        },
+      });
+
+      // Animate links out
+      tl.to(menuLinks, {
+        opacity: 0,
+        y: -10,
+        duration: 0.3,
+        stagger: -0.05,
+        ease: "power2.in",
+      });
+
+      // Collapse circle back into the button
+      tl.to(
+        menuOverlay,
+        {
+          clipPath: `circle(0px at ${x}px ${y}px)`,
+          duration: 0.7,
+          ease: "power3.inOut",
+        },
+        "-=0.1",
+      );
+
+      // Morph 'X' back to hamburger
+      gsap.to([lineTop, lineMid, lineBot], {
+        y: 0,
+        rotation: 0,
+        opacity: 1,
+        transformOrigin: "center",
+        duration: 0.4,
+        ease: "power2.inOut",
+      });
+
+      // Change 'burger' text color back to yellow
+      gsap.to(titleBurger, {
+        color: "#facc15",
+        duration: 0.4,
+        delay: 0.1,
+        ease: "power2.inOut",
+      });
+    }
+  });
+</script>

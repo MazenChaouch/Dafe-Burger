@@ -1,0 +1,113 @@
+---
+import { Image } from "astro:assets";
+import chips0 from "../assets/chips/chips_0.png";
+import chips1 from "../assets/chips/chips_1.png";
+import chips2 from "../assets/chips/chips_2.png";
+import chips3 from "../assets/chips/chips_3.png";
+import chips4 from "../assets/chips/chips_4.png";
+import chips5 from "../assets/chips/chips_5.png";
+import chips6 from "../assets/chips/chips_6.png";
+import chips7 from "../assets/chips/chips_7.png";
+
+const chipImages = [
+  { src: chips0, alt: "chip 0", blur: true, size: 6 },
+  { src: chips1, alt: "chip 1", blur: false, size: 5 },
+  { src: chips2, alt: "chip 2", blur: true, size: 4 },
+  { src: chips3, alt: "chip 3", blur: false, size: 6 },
+  { src: chips4, alt: "chip 4", blur: false, size: 5.5 },
+  { src: chips5, alt: "chip 5", blur: false, size: 4 },
+  { src: chips6, alt: "chip 6", blur: true, size: 5 },
+  { src: chips7, alt: "chip 7", blur: false, size: 5.5 },
+];
+---
+
+<div class="chips-container flex items-center justify-center">
+  {
+    chipImages.map((chip) => (
+      <div class="chip-entrance absolute">
+        <div class="chip-wrapper">
+          <Image
+            src={chip.src}
+            alt={chip.alt}
+            class={`chip-item object-contain${chip.blur ? " blur-xs" : ""}`}
+            style={`width: ${chip.size}vw; height: ${chip.size}vw;`}
+          />
+        </div>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  import gsap from "gsap";
+  import { store } from "../store";
+
+  // ── Data ──
+  const chipsData = [
+    { openX: -26, openY: 8, closedX: -18, closedY: 7 },
+    { openX: -23, openY: -2, closedX: -18, closedY: -1 },
+    { openX: -20, openY: -12, closedX: -15, closedY: -11.7 },
+    { openX: -6, openY: -20.3, closedX: -4, closedY: -16 },
+    { openX: 5, openY: -19, closedX: 8, closedY: -14.6 },
+    { openX: 18, openY: -14.1, closedX: 17, closedY: -9 },
+    { openX: 20, openY: -4, closedX: 18, closedY: -3 },
+    { openX: 25, openY: 10, closedX: 15, closedY: 8 },
+  ];
+
+  // ── Init & Animation per container ──
+  const containers = document.querySelectorAll<HTMLElement>(".chips-container");
+
+  containers.forEach((container) => {
+    // ── DOM refs scoped to this instance ──
+    const entranceEls =
+      container.querySelectorAll<HTMLElement>(".chip-entrance");
+    const wrapperEls = container.querySelectorAll<HTMLElement>(".chip-wrapper");
+    const chipEls = container.querySelectorAll<HTMLElement>(".chip-item");
+
+    // ── Init: apply closed positions ──
+    wrapperEls.forEach((el, i) => {
+      const d = chipsData[i];
+      el.style.transform = `translateX(${d.closedX}vw) translateY(${d.closedY}vw)`;
+    });
+
+    // ── Entrance animation ──
+    const entranceTl = gsap.timeline();
+
+    entranceTl.from(entranceEls, {
+      y: -window.innerHeight,
+      opacity: 0,
+      duration: 1.5,
+      ease: "power3.out",
+      stagger: { each: 0.05, from: "random" },
+    });
+
+    // Idle floating after entrance
+    entranceTl.add(() => {
+      chipEls.forEach((chip) => {
+        gsap.to(chip, {
+          x: gsap.utils.random(-15, 15),
+          y: gsap.utils.random(-15, 15),
+          rotation: gsap.utils.random(-15, 15),
+          duration: 1,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        });
+      });
+    });
+
+    // ── React to open/close ──
+    store.subscribe((isOpen) => {
+      wrapperEls.forEach((el, i) => {
+        const d = chipsData[i];
+        gsap.to(el, {
+          x: `${isOpen ? d.openX : d.closedX}vw`,
+          y: `${isOpen ? d.openY : d.closedY}vw`,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+          overwrite: true,
+        });
+      });
+    });
+  });
+</script>

@@ -1,0 +1,198 @@
+---
+import { Image } from "astro:assets";
+import topBun from "../assets/burger/top-bun.png";
+import lettuce from "../assets/burger/letuce.png";
+import cheese from "../assets/burger/cheese.png";
+import tomato from "../assets/burger/tomato.png";
+import onions from "../assets/burger/onions.png";
+import meat from "../assets/burger/meat.png";
+import bottomBun from "../assets/burger/bottom-bun.png";
+
+const images = [
+  { src: topBun, alt: "Top bun" },
+  { src: tomato, alt: "Tomato" },
+  { src: onions, alt: "Onions" },
+  { src: cheese, alt: "Cheese" },
+  { src: meat, alt: "Meat" },
+  { src: lettuce, alt: "Lettuce" },
+  { src: bottomBun, alt: "Bottom bun" },
+];
+---
+
+<button
+  class="burger-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+>
+  {
+    images.map((img, i) => {
+      const isLeft = i % 2 === 0;
+      return (
+        <div class="burger-layer relative">
+          <Image
+            src={img.src}
+            alt={img.alt}
+            class="burger-item w-[14vw] object-contain"
+          />
+          <div
+            class={`layer-label pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center opacity-0 ${
+              isLeft
+                ? "right-[calc(100%-1.25vw)] flex-row-reverse"
+                : "left-[calc(100%-1.25vw)] flex-row"
+            }`}
+          >
+            <div class="size-[0.7vw] shrink-0 rounded-full bg-white" />
+            <div class="h-0.5 w-[6vw] shrink-0 bg-white" />
+            <div
+              class={`flex flex-col gap-[0.2vw] ${
+                isLeft ? "items-end text-right" : "items-start text-left"
+              }`}
+            >
+              <span class="label-name text-[1.2vw] leading-none font-extrabold tracking-widest whitespace-nowrap text-white uppercase" />
+              <span class="label-cal text-[0.9vw] leading-none font-medium whitespace-nowrap text-white/75" />
+            </div>
+          </div>
+        </div>
+      );
+    })
+  }
+  <div
+    class="buy-now-btn pointer-events-none mx-auto mt-[3vw] w-[14vw] overflow-hidden rounded-full bg-yellow-400 py-[0.6vw] text-center text-[1.1vw] font-bold tracking-wider text-black uppercase opacity-0"
+    style="width: 0;"
+  >
+    <span class="whitespace-nowrap">Buy Now</span>
+  </div>
+</button>
+
+<script>
+  import gsap from "gsap";
+  import { store } from "../store";
+
+  // ── Data ──
+  const layers = [
+    { openY: -4, closedY: 5.6, z: 50, label: "Top Bun", cal: "120 kcal" },
+    { openY: -3, closedY: 4, z: 40, label: "Tomato", cal: "5 kcal" },
+    { openY: -2, closedY: 3, z: 30, label: "Onions", cal: "10 kcal" },
+    { openY: -1, closedY: 2, z: 20, label: "Cheese", cal: "80 kcal" },
+    { openY: 0, closedY: 0, z: 10, label: "Beef Patty", cal: "250 kcal" },
+    { openY: 1, closedY: -1, z: 0, label: "Lettuce", cal: "3 kcal" },
+    { openY: 2, closedY: -2, z: 10, label: "Bottom Bun", cal: "120 kcal" },
+  ];
+
+  // ── Init & Animation per container ──
+  const containers =
+    document.querySelectorAll<HTMLElement>(".burger-container");
+
+  containers.forEach((container) => {
+    // ── DOM refs scoped to this instance ──
+    const layerEls = container.querySelectorAll<HTMLElement>(".burger-layer");
+    const itemEls = container.querySelectorAll<HTMLElement>(".burger-item");
+    const labelEls = container.querySelectorAll<HTMLElement>(".layer-label");
+    const buyNowBtn = container.querySelector<HTMLElement>(".buy-now-btn");
+
+    // ── Init: apply data to DOM ──
+    layerEls.forEach((el, i) => {
+      const d = layers[i];
+      el.style.zIndex = String(d.z);
+      el.style.transform = `translateY(${d.closedY}vw)`;
+    });
+
+    labelEls.forEach((el, i) => {
+      el.querySelector(".label-name")!.textContent = layers[i].label;
+      el.querySelector(".label-cal")!.textContent = layers[i].cal;
+      gsap.set(el, { opacity: 0, x: i % 2 === 0 ? -30 : 30 });
+    });
+
+    // ── Click → toggle store ──
+    container.addEventListener("click", () => store.toggle());
+
+    // ── Entrance animation ──
+    const entranceTl = gsap.timeline();
+
+    entranceTl.from(itemEls, {
+      y: -window.innerHeight,
+      opacity: 0,
+      duration: 1.8,
+      ease: "power3.out",
+      stagger: { each: 0.07, from: "end" },
+    });
+
+    // ── Idle bounce (runs after entrance) ──
+    let bounceTween = gsap.to(container, {
+      y: "-2vw",
+      duration: 1,
+      delay: entranceTl.duration() + 1,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+    });
+
+    // ── React to open/close ──
+    store.subscribe((isOpen) => {
+      // 1. Animate layer positions
+      layerEls.forEach((el, i) => {
+        gsap.to(el, {
+          y: `${isOpen ? layers[i].openY : layers[i].closedY}vw`,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+          overwrite: true,
+        });
+      });
+
+      // 2. Animate labels in/out
+      labelEls.forEach((el, i) => {
+        const dir = i % 2 === 0 ? -30 : 30;
+        gsap.to(el, {
+          opacity: isOpen ? 1 : 0,
+          x: isOpen ? 0 : dir,
+          duration: isOpen ? 0.5 : 0.3,
+          delay: isOpen ? 0.2 + i * 0.06 : 0,
+          ease: isOpen ? "power2.out" : "power2.in",
+          overwrite: true,
+        });
+      });
+
+      // 3. Pause/resume idle bounce
+      if (bounceTween) {
+        if (isOpen) {
+          bounceTween.pause();
+          gsap.to(container, {
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: true,
+          });
+        } else {
+          bounceTween.resume();
+        }
+      }
+
+      // 4. Show/hide Buy Now button
+      if (buyNowBtn) {
+        if (isOpen) {
+          gsap.fromTo(
+            buyNowBtn,
+            { y: "-4vw", opacity: 0, width: 0 },
+            {
+              y: "2.5vw",
+              opacity: 1,
+              width: "14vw",
+              duration: 0.4,
+              ease: "power2.out",
+              pointerEvents: "auto",
+              overwrite: true,
+            },
+          );
+        } else {
+          gsap.to(buyNowBtn, {
+            y: 0,
+            opacity: 0,
+            width: 0,
+            duration: 0.2,
+            ease: "power2.in",
+            pointerEvents: "none",
+            overwrite: true,
+          });
+        }
+      }
+    });
+  });
+</script>
