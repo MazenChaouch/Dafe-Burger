@@ -9,21 +9,114 @@ import chips5 from "../assets/chips/chips_5.png";
 import chips6 from "../assets/chips/chips_6.png";
 import chips7 from "../assets/chips/chips_7.png";
 
-const chipImages = [
-  { src: chips0, alt: "chip 0", blur: true, size: 6 },
-  { src: chips1, alt: "chip 1", blur: false, size: 5 },
-  { src: chips2, alt: "chip 2", blur: true, size: 4 },
-  { src: chips3, alt: "chip 3", blur: false, size: 6 },
-  { src: chips4, alt: "chip 4", blur: false, size: 5.5 },
-  { src: chips5, alt: "chip 5", blur: false, size: 4 },
-  { src: chips6, alt: "chip 6", blur: true, size: 5 },
-  { src: chips7, alt: "chip 7", blur: false, size: 5.5 },
+/**
+ * Single source of truth for each chip:
+ * rendering properties (size, blur) + animation targets (open/closed positions).
+ */
+interface ChipData {
+  src: ImageMetadata;
+  alt: string;
+  /** Display size in vw */
+  size: number;
+  /** Whether to apply a blur filter (depth-of-field effect) */
+  blur: boolean;
+  /** Horizontal offset (vw) when open */
+  openX: number;
+  /** Vertical offset (vw) when open */
+  openY: number;
+  /** Horizontal offset (vw) when closed */
+  closedX: number;
+  /** Vertical offset (vw) when closed */
+  closedY: number;
+}
+
+const chips: ChipData[] = [
+  {
+    src: chips0,
+    alt: "Flying potato chip",
+    blur: true,
+    size: 6,
+    openX: -26,
+    openY: 8,
+    closedX: -18,
+    closedY: 7,
+  },
+  {
+    src: chips1,
+    alt: "Flying potato chip",
+    blur: false,
+    size: 5,
+    openX: -23,
+    openY: -2,
+    closedX: -18,
+    closedY: -1,
+  },
+  {
+    src: chips2,
+    alt: "Flying potato chip",
+    blur: true,
+    size: 4,
+    openX: -20,
+    openY: -12,
+    closedX: -15,
+    closedY: -11.7,
+  },
+  {
+    src: chips3,
+    alt: "Flying potato chip",
+    blur: false,
+    size: 6,
+    openX: -6,
+    openY: -20.3,
+    closedX: -4,
+    closedY: -16,
+  },
+  {
+    src: chips4,
+    alt: "Flying potato chip",
+    blur: false,
+    size: 5.5,
+    openX: 5,
+    openY: -19,
+    closedX: 8,
+    closedY: -14.6,
+  },
+  {
+    src: chips5,
+    alt: "Flying potato chip",
+    blur: false,
+    size: 4,
+    openX: 18,
+    openY: -14.1,
+    closedX: 17,
+    closedY: -9,
+  },
+  {
+    src: chips6,
+    alt: "Flying potato chip",
+    blur: true,
+    size: 5,
+    openX: 20,
+    openY: -4,
+    closedX: 18,
+    closedY: -3,
+  },
+  {
+    src: chips7,
+    alt: "Flying potato chip",
+    blur: false,
+    size: 5.5,
+    openX: 25,
+    openY: 10,
+    closedX: 15,
+    closedY: 8,
+  },
 ];
 ---
 
 <div class="chips-container flex items-center justify-center">
   {
-    chipImages.map((chip) => (
+    chips.map((chip) => (
       <div class="chip-entrance absolute">
         <div class="chip-wrapper">
           <Image
@@ -42,7 +135,9 @@ const chipImages = [
   import gsap from "gsap";
   import { store } from "../store";
 
-  // ── Data ──
+  // Mirror of the frontmatter data for the client-side animation.
+  // A future improvement could pass this via data-attributes to eliminate
+  // the duplication entirely.
   const chipsData = [
     { openX: -26, openY: 8, closedX: -18, closedY: 7 },
     { openX: -23, openY: -2, closedX: -18, closedY: -1 },
@@ -58,46 +153,71 @@ const chipImages = [
   const containers = document.querySelectorAll<HTMLElement>(".chips-container");
 
   containers.forEach((container) => {
-    // ── DOM refs scoped to this instance ──
+    // ── DOM refs scoped to this container instance ──
     const entranceEls =
       container.querySelectorAll<HTMLElement>(".chip-entrance");
     const wrapperEls = container.querySelectorAll<HTMLElement>(".chip-wrapper");
     const chipEls = container.querySelectorAll<HTMLElement>(".chip-item");
 
-    // ── Init: apply closed positions ──
+    // ── Init: apply closed positions via CSS (no GSAP) ──
+    // Must run before the entrance animation so gsap.from() isn't overwritten.
     wrapperEls.forEach((el, i) => {
       const d = chipsData[i];
       el.style.transform = `translateX(${d.closedX}vw) translateY(${d.closedY}vw)`;
     });
 
-    // ── Entrance animation ──
-    const entranceTl = gsap.timeline();
+    let entranceTl: gsap.core.Timeline | null = null;
+    let floatTweens: gsap.core.Tween[] = [];
 
-    entranceTl.from(entranceEls, {
-      y: -window.innerHeight,
-      opacity: 0,
-      duration: 1.5,
-      ease: "power3.out",
-      stagger: { each: 0.05, from: "random" },
-    });
+    // ── Entrance animation on scroll ──
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Kill existing timelines/tweens if any
+            if (entranceTl) entranceTl.kill();
+            floatTweens.forEach((t) => t.kill());
+            floatTweens = [];
 
-    // Idle floating after entrance
-    entranceTl.add(() => {
-      chipEls.forEach((chip) => {
-        gsap.to(chip, {
-          x: gsap.utils.random(-15, 15),
-          y: gsap.utils.random(-15, 15),
-          rotation: gsap.utils.random(-15, 15),
-          duration: 1,
-          ease: "sine.inOut",
-          repeat: -1,
-          yoyo: true,
+            entranceTl = gsap.timeline();
+
+            entranceTl.fromTo(
+              entranceEls,
+              { y: -window.innerHeight, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 1.5,
+                ease: "power3.out",
+                stagger: { each: 0.05, from: "random" },
+              },
+            );
+
+            // Add new float tweens after entrance
+            entranceTl.add(() => {
+              chipEls.forEach((chip) => {
+                const tween = gsap.to(chip, {
+                  x: gsap.utils.random(-15, 15),
+                  y: gsap.utils.random(-15, 15),
+                  rotation: gsap.utils.random(-15, 15),
+                  duration: 1,
+                  ease: "sine.inOut",
+                  repeat: -1,
+                  yoyo: true,
+                });
+                floatTweens.push(tween);
+              });
+            });
+          }
         });
-      });
-    });
+      },
+      { threshold: 0.1 },
+    );
 
-    // ── React to open/close ──
-    store.subscribe((isOpen) => {
+    observer.observe(container);
+
+    // ── React to open/close (store fires immediately with current state) ──
+    const unsubscribe = store.subscribe((isOpen) => {
       wrapperEls.forEach((el, i) => {
         const d = chipsData[i];
         gsap.to(el, {
@@ -109,5 +229,8 @@ const chipImages = [
         });
       });
     });
+
+    // Clean up on page unload (important for View Transitions)
+    document.addEventListener("astro:before-swap", unsubscribe, { once: true });
   });
 </script>

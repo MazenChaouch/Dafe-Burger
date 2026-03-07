@@ -1,106 +1,176 @@
 ---
+import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import Chips from "../components/Chips.astro";
 import Burger from "../components/Burger.astro";
 import "../styles/global.css";
 ---
 
-<Navbar />
+<Layout>
+  <Navbar />
 
-<div
-  class="h-screen w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto scroll-smooth"
->
-  <!-- Red Page / Slide 1 -->
-  <section
-    class="relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#FF8686] to-[#FF0000] to-60%"
+  <!-- Dot Navigation -->
+  <div
+    class="fixed top-1/2 left-16 z-50 flex -translate-y-1/2 flex-col gap-5 rounded-full bg-black/20 px-5 py-6 backdrop-blur-sm"
   >
-    <h1
-      class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:0.5px_white] [writing-mode:sideways-lr]"
+    <a
+      href="#slide-1"
+      aria-label="Go to slide 1"
+      class="nav-dot size-6 cursor-pointer rounded-full border-2 border-yellow-400 bg-transparent transition-all hover:scale-125 focus:outline-none"
+    ></a>
+    <a
+      href="#slide-2"
+      aria-label="Go to slide 2"
+      class="nav-dot size-6 cursor-pointer rounded-full border-2 border-yellow-400 bg-transparent transition-all hover:scale-125 focus:outline-none"
+    ></a>
+  </div>
+
+  <div
+    class="scroll-container h-screen w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto scroll-smooth"
+  >
+    <!-- Red Page / Slide 1 -->
+    <section
+      id="slide-1"
+      class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#FF8686] to-[#FF0000] to-60%"
     >
-      YAMMY
-    </h1>
-    <h1
-      class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:0.5px_white] [writing-mode:vertical-rl]"
-    >
-      BURGER
-    </h1>
-    <div class="w-fit">
-      <h1
-        class="main-text absolute top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[25dvh] font-bold text-nowrap text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
+      <!-- Decorative vertical text — presentational, not headings -->
+      <p
+        aria-hidden="true"
+        class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
       >
-        The Best Burger in Town
-      </h1>
-      <Chips />
-      <Burger />
-      <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
-        <button
-          class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
-          >Click on burger</button
+        YAMMY
+      </p>
+      <p
+        aria-hidden="true"
+        class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
+      >
+        BURGER
+      </p>
+
+      <div class="w-fit">
+        <!-- Single <h1> per page -->
+        <h1
+          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white"
         >
-      </div>
-      <div class="absolute top-[95%] left-1/2 -translate-x-1/2">
-        <div class="h-8 w-5 rounded-2xl border-[3px] border-white">
-          <div
-            class="mx-auto size-1.5 translate-y-1 animate-bounce rounded-full bg-white"
+          The Best Burger in Town
+        </h1>
+        <Chips />
+        <Burger />
+        <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
+          <button
+            id="toggle-hint"
+            class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
+            >Click on burger</button
           >
+        </div>
+        <!-- Scroll indicator -->
+        <div
+          class="absolute top-[95%] left-1/2 -translate-x-1/2"
+          aria-hidden="true"
+        >
+          <div class="h-8 w-5 rounded-2xl border-[3px] border-white">
+            <div
+              class="mx-auto size-1.5 translate-y-1 animate-bounce rounded-full bg-white"
+            >
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Green Page / Slide 2 -->
-  <section
-    class="relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#66D97A] to-[#0A8022] to-60%"
-  >
-    <h1
-      class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:0.5px_white] [writing-mode:sideways-lr]"
+    <!-- Green Page / Slide 2 -->
+    <section
+      id="slide-2"
+      class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#66D97A] to-[#0A8022] to-60%"
     >
-      YAMMY
-    </h1>
-    <h1
-      class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:0.5px_white] [writing-mode:vertical-rl]"
-    >
-      BURGER
-    </h1>
-    <div class="w-fit">
-      <h1
-        class="main-text absolute top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[25dvh] font-bold text-nowrap text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
+      <!-- Decorative vertical text -->
+      <p
+        aria-hidden="true"
+        class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
       >
-        Fresh Ingredients Always
-      </h1>
-      <Chips />
-      <Burger />
-      <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
-        <button
-          class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
-          >Click on burger</button
+        YAMMY
+      </p>
+      <p
+        aria-hidden="true"
+        class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
+      >
+        BURGER
+      </p>
+
+      <div class="w-fit">
+        <h2
+          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white"
         >
+          Fresh Ingredients Always
+        </h2>
+        <Chips />
+        <Burger />
+        <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
+          <button
+            class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
+            >Click on burger</button
+          >
+        </div>
       </div>
-    </div>
-  </section>
-</div>
+    </section>
+  </div>
+</Layout>
 
 <script>
   import gsap from "gsap";
   import { store } from "../store";
 
-  const mainTexts = document.querySelectorAll(".main-text");
-  const toggleBtns = document.querySelectorAll(".toggle-btn");
+  const mainTexts = document.querySelectorAll<HTMLElement>(".main-text");
+  const toggleBtns = document.querySelectorAll<HTMLElement>(".toggle-btn");
 
-  // ── Main text entrance ──
-  mainTexts.forEach((mainText) => {
-    gsap.from(mainText, {
-      y: -window.innerHeight,
-      opacity: 0,
-      duration: 1.5,
-      ease: "power3.out",
-    });
-  });
+  const sections = document.querySelectorAll<HTMLElement>(".snap-section");
+  const navDots = document.querySelectorAll<HTMLAnchorElement>(".nav-dot");
 
-  // ── React to open/close ──
-  store.subscribe((isOpen) => {
-    // Slide main texts off-screen to top
+  // ── Entrance on scroll & Navigation Update ──
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.getAttribute("id");
+
+          // 1. Update navigation dots
+          navDots.forEach((dot) => {
+            const isMatch = dot.getAttribute("href") === `#${sectionId}`;
+            if (isMatch) {
+              dot.classList.add("bg-yellow-400", "scale-125");
+              dot.classList.remove("bg-transparent", "scale-100");
+            } else {
+              dot.classList.remove("bg-yellow-400", "scale-125");
+              dot.classList.add("bg-transparent", "scale-100");
+            }
+          });
+
+          // 2. Play main text entrance
+          const mainText = entry.target.querySelector(".main-text");
+          if (mainText) {
+            gsap.killTweensOf(mainText);
+            gsap.fromTo(
+              mainText,
+              { y: -window.innerHeight, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 1.5,
+                ease: "power3.out",
+              },
+            );
+          }
+        }
+      });
+    },
+    { threshold: 0.5 }, // Trigger when at least 50% of the slide is visible
+  );
+
+  sections.forEach((section) => observer.observe(section));
+
+  // ── React to open/close (store fires immediately with current state) ──
+  const unsubscribe = store.subscribe((isOpen) => {
+    // Slide main texts off-screen to the top
     mainTexts.forEach((mainText) => {
       gsap.to(mainText, {
         y: isOpen ? -window.innerHeight : 0,
@@ -111,7 +181,7 @@ import "../styles/global.css";
       });
     });
 
-    // Hide/show all "Click on burger" buttons
+    // Hide / show "Click on burger" hint
     toggleBtns.forEach((toggleBtn) => {
       gsap.to(toggleBtn, {
         opacity: isOpen ? 0 : 1,
@@ -123,4 +193,6 @@ import "../styles/global.css";
       });
     });
   });
+
+  document.addEventListener("astro:before-swap", unsubscribe, { once: true });
 </script>

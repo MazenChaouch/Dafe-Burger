@@ -3,6 +3,7 @@
 ---
 
 <nav
+  id="site-nav"
   class="fixed top-8 left-1/2 z-50 flex w-7xl -translate-x-1/2 items-center justify-between px-8 py-5"
 >
   <!-- Title -->
@@ -19,7 +20,9 @@
   <button
     id="menu-btn"
     class="relative z-50 flex size-[3vw] cursor-pointer items-center justify-center rounded-full bg-yellow-400 transition-transform hover:scale-110"
-    aria-label="Menu"
+    aria-label="Open navigation menu"
+    aria-expanded="false"
+    aria-controls="menu-overlay"
   >
     <svg
       class="size-[1.4vw]"
@@ -39,6 +42,9 @@
 <!-- Full Screen Menu Overlay -->
 <div
   id="menu-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Navigation menu"
   class="pointer-events-none fixed inset-0 z-40 flex flex-col items-center justify-center bg-yellow-400 opacity-0"
   style="clip-path: circle(0px at 0px 0px);"
 >
@@ -71,27 +77,36 @@
 <script>
   import gsap from "gsap";
 
-  const menuBtn = document.querySelector("#menu-btn");
-  const menuOverlay = document.querySelector("#menu-overlay");
-  const menuLinks = document.querySelectorAll(".menu-link");
-  const lineTop = document.querySelector(".menu-line-top");
-  const lineMid = document.querySelector(".menu-line-mid");
-  const lineBot = document.querySelector(".menu-line-bot");
-  const titleBurger = document.querySelector("#title-burger");
+  // ── Scope all selectors to the nav element to be safe if component
+  //    is ever rendered multiple times or alongside other navs.
+  const nav = document.querySelector<HTMLElement>("#site-nav")!;
+  const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn")!;
+  const menuOverlay = document.querySelector<HTMLElement>("#menu-overlay")!;
+  const menuLinks = menuOverlay.querySelectorAll<HTMLElement>(".menu-link");
+  const lineTop = nav.querySelector<SVGLineElement>(".menu-line-top")!;
+  const lineMid = nav.querySelector<SVGLineElement>(".menu-line-mid")!;
+  const lineBot = nav.querySelector<SVGLineElement>(".menu-line-bot")!;
+  const titleBurger = nav.querySelector<HTMLElement>("#title-burger")!;
 
   let isMenuOpen = false;
 
-  menuBtn?.addEventListener("click", () => {
+  menuBtn.addEventListener("click", () => {
     isMenuOpen = !isMenuOpen;
 
-    // Get the exact center coordinate of the button
+    // Keep aria-expanded in sync with visual state
+    menuBtn.setAttribute("aria-expanded", String(isMenuOpen));
+    menuBtn.setAttribute(
+      "aria-label",
+      isMenuOpen ? "Close navigation menu" : "Open navigation menu",
+    );
+
+    // Get the exact centre coordinate of the button for the clip-path origin
     const rect = menuBtn.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
 
     if (isMenuOpen) {
       // ── Open Menu ──
-      // First ensure opacity is 1 and clickable, but clipped to just the button coords
       gsap.set(menuOverlay, {
         opacity: 1,
         pointerEvents: "auto",
@@ -99,14 +114,13 @@
       });
 
       const tl = gsap.timeline();
-      // Animate the circle out to cover the whole screen (150% handles diagonals)
+
       tl.to(menuOverlay, {
         clipPath: `circle(150% at ${x}px ${y}px)`,
         duration: 0.8,
         ease: "expo.inOut",
       });
 
-      // Stagger in the links
       tl.to(
         menuLinks,
         {
@@ -119,7 +133,7 @@
         "-=0.3",
       );
 
-      // Morph hamburger to 'X'
+      // Morph hamburger → X
       gsap.to(lineTop, {
         y: 6,
         rotation: 45,
@@ -136,7 +150,7 @@
         ease: "power2.inOut",
       });
 
-      // Change 'burger' text color to black to contrast the yellow background
+      // 'burger' text → black (contrasts yellow overlay)
       gsap.to(titleBurger, {
         color: "#000000",
         duration: 0.4,
@@ -151,7 +165,6 @@
         },
       });
 
-      // Animate links out
       tl.to(menuLinks, {
         opacity: 0,
         y: -10,
@@ -160,7 +173,6 @@
         ease: "power2.in",
       });
 
-      // Collapse circle back into the button
       tl.to(
         menuOverlay,
         {
@@ -171,7 +183,7 @@
         "-=0.1",
       );
 
-      // Morph 'X' back to hamburger
+      // Morph X → hamburger
       gsap.to([lineTop, lineMid, lineBot], {
         y: 0,
         rotation: 0,
@@ -181,7 +193,7 @@
         ease: "power2.inOut",
       });
 
-      // Change 'burger' text color back to yellow
+      // 'burger' text → yellow
       gsap.to(titleBurger, {
         color: "#facc15",
         duration: 0.4,

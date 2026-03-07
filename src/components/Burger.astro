@@ -8,73 +8,167 @@ import onions from "../assets/burger/onions.png";
 import meat from "../assets/burger/meat.png";
 import bottomBun from "../assets/burger/bottom-bun.png";
 
-const images = [
-  { src: topBun, alt: "Top bun" },
-  { src: tomato, alt: "Tomato" },
-  { src: onions, alt: "Onions" },
-  { src: cheese, alt: "Cheese" },
-  { src: meat, alt: "Meat" },
-  { src: lettuce, alt: "Lettuce" },
-  { src: bottomBun, alt: "Bottom bun" },
+/**
+ * Each entry combines the image asset with its animation targets
+ * and ingredient label, keeping all layer data in one place.
+ */
+interface BurgerLayer {
+  src: ImageMetadata;
+  alt: string;
+  label: string;
+  cal: string;
+  /** Y offset (vw) when the burger is in the open/exploded state */
+  openY: number;
+  /** Y offset (vw) when the burger is in the closed/stacked state */
+  closedY: number;
+  /** CSS z-index for correct visual stacking */
+  z: number;
+}
+
+const layers: BurgerLayer[] = [
+  {
+    src: topBun,
+    alt: "Top bun",
+    label: "Top Bun",
+    cal: "120 kcal",
+    openY: -4,
+    closedY: 5.6,
+    z: 50,
+  },
+  {
+    src: tomato,
+    alt: "Tomato",
+    label: "Tomato",
+    cal: "5 kcal",
+    openY: -3,
+    closedY: 4.0,
+    z: 40,
+  },
+  {
+    src: onions,
+    alt: "Onions",
+    label: "Onions",
+    cal: "10 kcal",
+    openY: -2,
+    closedY: 3.0,
+    z: 30,
+  },
+  {
+    src: cheese,
+    alt: "Cheese",
+    label: "Cheese",
+    cal: "80 kcal",
+    openY: -1,
+    closedY: 2.0,
+    z: 20,
+  },
+  {
+    src: meat,
+    alt: "Beef patty",
+    label: "Beef Patty",
+    cal: "250 kcal",
+    openY: 0,
+    closedY: 0.0,
+    z: 10,
+  },
+  {
+    src: lettuce,
+    alt: "Lettuce",
+    label: "Lettuce",
+    cal: "3 kcal",
+    openY: 1,
+    closedY: -1.0,
+    z: 0,
+  },
+  {
+    src: bottomBun,
+    alt: "Bottom bun",
+    label: "Bottom Bun",
+    cal: "120 kcal",
+    openY: 2,
+    closedY: -2.0,
+    z: 10,
+  },
 ];
 ---
 
-<button
-  class="burger-container absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+<div
+  class="pointer-events-none absolute inset-0 flex items-center justify-center"
 >
-  {
-    images.map((img, i) => {
-      const isLeft = i % 2 === 0;
-      return (
-        <div class="burger-layer relative">
-          <Image
-            src={img.src}
-            alt={img.alt}
-            class="burger-item w-[14vw] object-contain"
-          />
-          <div
-            class={`layer-label pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center opacity-0 ${
-              isLeft
-                ? "right-[calc(100%-1.25vw)] flex-row-reverse"
-                : "left-[calc(100%-1.25vw)] flex-row"
-            }`}
-          >
-            <div class="size-[0.7vw] shrink-0 rounded-full bg-white" />
-            <div class="h-0.5 w-[6vw] shrink-0 bg-white" />
+  <button
+    class="burger-container pointer-events-auto relative cursor-pointer"
+    aria-label="Toggle burger ingredients"
+  >
+    {
+      layers.map((layer, i) => {
+        const isLeft = i % 2 === 0;
+        return (
+          <div class="burger-layer relative">
+            <Image
+              src={layer.src}
+              alt={layer.alt}
+              class="burger-item w-[14vw] object-contain"
+            />
             <div
-              class={`flex flex-col gap-[0.2vw] ${
-                isLeft ? "items-end text-right" : "items-start text-left"
+              class={`layer-label pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center opacity-0 ${
+                isLeft
+                  ? "right-[calc(100%-1.25vw)] flex-row-reverse"
+                  : "left-[calc(100%-1.25vw)] flex-row"
               }`}
             >
-              <span class="label-name text-[1.2vw] leading-none font-extrabold tracking-widest whitespace-nowrap text-white uppercase" />
-              <span class="label-cal text-[0.9vw] leading-none font-medium whitespace-nowrap text-white/75" />
+              <div class="size-[0.7vw] shrink-0 rounded-full bg-white" />
+              <div class="h-0.5 w-[6vw] shrink-0 bg-white" />
+              <div
+                class={`flex flex-col gap-[0.2vw] ${
+                  isLeft ? "items-end text-right" : "items-start text-left"
+                }`}
+              >
+                {/* Text is set via JS so screenreaders already have the alt */}
+                <span
+                  class="label-name text-[1.2vw] leading-none font-extrabold tracking-widest whitespace-nowrap text-white uppercase"
+                  aria-hidden="true"
+                />
+                <span
+                  class="label-cal text-[0.9vw] leading-none font-medium whitespace-nowrap text-white/75"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
           </div>
-        </div>
-      );
-    })
-  }
-  <div
-    class="buy-now-btn pointer-events-none mx-auto mt-[3vw] w-[14vw] overflow-hidden rounded-full bg-yellow-400 py-[0.6vw] text-center text-[1.1vw] font-bold tracking-wider text-black uppercase opacity-0"
-    style="width: 0;"
-  >
-    <span class="whitespace-nowrap">Buy Now</span>
-  </div>
-</button>
+        );
+      })
+    }
+
+    <!--
+    buy-now-btn: width starts at 0 (managed entirely by GSAP).
+    The Tailwind width class is intentionally omitted here to avoid
+    conflicting with GSAP's width animation.
+  -->
+    <div
+      class="buy-now-btn pointer-events-none mx-auto mt-[3vw] overflow-hidden rounded-full bg-yellow-400 py-[0.6vw] text-center text-[1.1vw] font-bold tracking-wider text-black uppercase opacity-0"
+      style="width: 0;"
+    >
+      <span class="whitespace-nowrap">Buy Now</span>
+    </div>
+  </button>
+</div>
 
 <script>
   import gsap from "gsap";
   import { store } from "../store";
 
-  // ── Data ──
+  // ── Layer animation data is now defined in the Astro frontmatter.
+  // We read it from data-attributes or replicate just the numeric values here.
+  // Since Astro renders server-side, we keep the JS array in sync with the
+  // frontmatter definition — a future improvement would pass it via data-attrs.
   const layers = [
     { openY: -4, closedY: 5.6, z: 50, label: "Top Bun", cal: "120 kcal" },
-    { openY: -3, closedY: 4, z: 40, label: "Tomato", cal: "5 kcal" },
-    { openY: -2, closedY: 3, z: 30, label: "Onions", cal: "10 kcal" },
-    { openY: -1, closedY: 2, z: 20, label: "Cheese", cal: "80 kcal" },
-    { openY: 0, closedY: 0, z: 10, label: "Beef Patty", cal: "250 kcal" },
-    { openY: 1, closedY: -1, z: 0, label: "Lettuce", cal: "3 kcal" },
-    { openY: 2, closedY: -2, z: 10, label: "Bottom Bun", cal: "120 kcal" },
+    { openY: -3, closedY: 4.0, z: 40, label: "Tomato", cal: "5 kcal" },
+    { openY: -2, closedY: 3.0, z: 30, label: "Onions", cal: "10 kcal" },
+    { openY: -1, closedY: 2.0, z: 20, label: "Cheese", cal: "80 kcal" },
+    { openY: 0, closedY: 0.0, z: 10, label: "Beef Patty", cal: "250 kcal" },
+    { openY: 1, closedY: -1.0, z: 0, label: "Lettuce", cal: "3 kcal" },
+    { openY: 2, closedY: -2.0, z: 10, label: "Bottom Bun", cal: "120 kcal" },
   ];
 
   // ── Init & Animation per container ──
@@ -82,51 +176,80 @@ const images = [
     document.querySelectorAll<HTMLElement>(".burger-container");
 
   containers.forEach((container) => {
-    // ── DOM refs scoped to this instance ──
+    // ── DOM refs scoped to this container instance ──
     const layerEls = container.querySelectorAll<HTMLElement>(".burger-layer");
     const itemEls = container.querySelectorAll<HTMLElement>(".burger-item");
     const labelEls = container.querySelectorAll<HTMLElement>(".layer-label");
     const buyNowBtn = container.querySelector<HTMLElement>(".buy-now-btn");
 
-    // ── Init: apply data to DOM ──
+    // ── Init: set closed positions directly via CSS (no GSAP) ──
+    // This must run before the entrance animation so gsap.from() can animate
+    // in from off-screen without a concurrent tween overwriting it.
     layerEls.forEach((el, i) => {
-      const d = layers[i];
-      el.style.zIndex = String(d.z);
-      el.style.transform = `translateY(${d.closedY}vw)`;
+      el.style.zIndex = String(layers[i].z);
+      el.style.transform = `translateY(${layers[i].closedY}vw)`;
     });
 
     labelEls.forEach((el, i) => {
-      el.querySelector(".label-name")!.textContent = layers[i].label;
-      el.querySelector(".label-cal")!.textContent = layers[i].cal;
+      el.querySelector<HTMLElement>(".label-name")!.textContent =
+        layers[i].label;
+      el.querySelector<HTMLElement>(".label-cal")!.textContent = layers[i].cal;
+      // gsap.set is zero-duration and doesn't create a conflicting tween
       gsap.set(el, { opacity: 0, x: i % 2 === 0 ? -30 : 30 });
     });
 
-    // ── Click → toggle store ──
+    // ── Click → toggle shared state ──
     container.addEventListener("click", () => store.toggle());
 
-    // ── Entrance animation ──
-    const entranceTl = gsap.timeline();
+    let bounceTween: gsap.core.Tween | null = null;
+    let entranceTl: gsap.core.Timeline | null = null;
 
-    entranceTl.from(itemEls, {
-      y: -window.innerHeight,
-      opacity: 0,
-      duration: 1.8,
-      ease: "power3.out",
-      stagger: { each: 0.07, from: "end" },
-    });
+    // ── Entrance animation on scroll ──
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Kill existing animations if any
+            if (bounceTween) bounceTween.kill();
+            if (entranceTl) entranceTl.kill();
 
-    // ── Idle bounce (runs after entrance) ──
-    let bounceTween = gsap.to(container, {
-      y: "-2vw",
-      duration: 1,
-      delay: entranceTl.duration() + 1,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-    });
+            // Reset container position before new bounce
+            gsap.set(container, { y: 0 });
 
-    // ── React to open/close ──
-    store.subscribe((isOpen) => {
+            entranceTl = gsap.timeline();
+
+            // Re-run the drop-in animation
+            entranceTl.fromTo(
+              itemEls,
+              { y: -window.innerHeight, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 1.8,
+                ease: "power3.out",
+                stagger: { each: 0.07, from: "end" },
+              },
+            );
+
+            // Start idle bounce after entrance completes
+            bounceTween = gsap.to(container, {
+              y: "-2vw",
+              duration: 1,
+              delay: 1.8 + layerEls.length * 0.07 + 1, // timeline duration + 1s rest
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+            });
+          }
+        });
+      },
+      { threshold: 0.1 }, // Trigger when 10% is visible
+    );
+
+    observer.observe(container);
+
+    // ── React to open/close (store fires immediately with current state) ──
+    const unsubscribe = store.subscribe((isOpen) => {
       // 1. Animate layer positions
       layerEls.forEach((el, i) => {
         gsap.to(el, {
@@ -137,7 +260,7 @@ const images = [
         });
       });
 
-      // 2. Animate labels in/out
+      // 2. Animate labels in / out
       labelEls.forEach((el, i) => {
         const dir = i % 2 === 0 ? -30 : 30;
         gsap.to(el, {
@@ -150,22 +273,20 @@ const images = [
         });
       });
 
-      // 3. Pause/resume idle bounce
-      if (bounceTween) {
-        if (isOpen) {
-          bounceTween.pause();
-          gsap.to(container, {
-            y: 0,
-            duration: 0.4,
-            ease: "power2.out",
-            overwrite: true,
-          });
-        } else {
-          bounceTween.resume();
-        }
+      // 3. Pause / resume idle bounce
+      if (isOpen) {
+        bounceTween?.pause();
+        gsap.to(container, {
+          y: 0,
+          duration: 0.4,
+          ease: "power2.out",
+          overwrite: true,
+        });
+      } else {
+        bounceTween?.resume();
       }
 
-      // 4. Show/hide Buy Now button
+      // 4. Show / hide Buy Now button
       if (buyNowBtn) {
         if (isOpen) {
           gsap.fromTo(
@@ -193,6 +314,11 @@ const images = [
           });
         }
       }
+    });
+
+    // Clean up on page unload (important for View Transitions)
+    document.addEventListener("astro:before-swap", unsubscribe, {
+      once: true,
     });
   });
 </script>
