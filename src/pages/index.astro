@@ -3,7 +3,11 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import Chips from "../components/Chips.astro";
 import Burger from "../components/Burger.astro";
-import "../styles/global.css";
+
+import SlideMenu from "../components/SlideMenu.astro";
+import SlideLocation from "../components/SlideLocation.astro";
+import SlideTestimonials from "../components/SlideTestimonials.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 ---
 
 <Layout>
@@ -11,18 +15,29 @@ import "../styles/global.css";
 
   <!-- Dot Navigation -->
   <div
-    class="fixed top-1/2 left-16 z-50 flex -translate-y-1/2 flex-col gap-5 rounded-full bg-black/20 px-5 py-6 backdrop-blur-sm"
+    id="dot-navigator"
+    class="fixed top-1/2 left-12 z-50 flex -translate-y-1/2 flex-col gap-6 rounded-full bg-black/10 px-6 py-8 shadow-xs inset-shadow-xs shadow-yellow-400 inset-shadow-yellow-400 backdrop-blur-sm transition-opacity duration-300"
   >
     <a
       href="#slide-1"
-      aria-label="Go to slide 1"
-      class="nav-dot size-6 cursor-pointer rounded-full border-2 border-yellow-400 bg-transparent transition-all hover:scale-125 focus:outline-none"
-    ></a>
+      class="nav-dot h-3 w-3 scale-125 rounded-full border border-yellow-400 bg-yellow-400"
+      aria-label="Home"></a>
     <a
       href="#slide-2"
-      aria-label="Go to slide 2"
-      class="nav-dot size-6 cursor-pointer rounded-full border-2 border-yellow-400 bg-transparent transition-all hover:scale-125 focus:outline-none"
-    ></a>
+      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
+      aria-label="About Us"></a>
+    <a
+      href="#slide-4"
+      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
+      aria-label="Menu Preview"></a>
+    <a
+      href="#slide-5"
+      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
+      aria-label="Location"></a>
+    <a
+      href="#slide-6"
+      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
+      aria-label="Reviews"></a>
   </div>
 
   <div
@@ -113,6 +128,11 @@ import "../styles/global.css";
         </div>
       </div>
     </section>
+
+    <SlideMenu />
+    <SlideLocation />
+    <SlideTestimonials />
+    <SiteFooter />
   </div>
 </Layout>
 
@@ -124,6 +144,7 @@ import "../styles/global.css";
   const toggleBtns = document.querySelectorAll<HTMLElement>(".toggle-btn");
 
   const sections = document.querySelectorAll<HTMLElement>(".snap-section");
+  const footer = document.querySelector<HTMLElement>("footer");
   const navDots = document.querySelectorAll<HTMLAnchorElement>(".nav-dot");
 
   // ── Entrance on scroll & Navigation Update ──
@@ -131,42 +152,82 @@ import "../styles/global.css";
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const sectionId = entry.target.getAttribute("id");
+          const target = entry.target as HTMLElement;
+          const sectionId = target.getAttribute("id");
 
-          // 1. Update navigation dots
-          navDots.forEach((dot) => {
-            const isMatch = dot.getAttribute("href") === `#${sectionId}`;
-            if (isMatch) {
-              dot.classList.add("bg-yellow-400", "scale-125");
-              dot.classList.remove("bg-transparent", "scale-100");
-            } else {
-              dot.classList.remove("bg-yellow-400", "scale-125");
-              dot.classList.add("bg-transparent", "scale-100");
-            }
-          });
+          // 1. Update navigation dots & URL hash (only for sections with IDs)
+          if (sectionId) {
+            // Update URL hash without jumping/adding to history stack
+            history.replaceState(null, "", `#${sectionId}`);
+
+            navDots.forEach((dot) => {
+              const isMatch = dot.getAttribute("href") === `#${sectionId}`;
+              if (isMatch) {
+                dot.classList.add("bg-yellow-400", "scale-125");
+                dot.classList.remove("bg-transparent", "scale-100");
+              } else {
+                dot.classList.remove("bg-yellow-400", "scale-125");
+                dot.classList.add("bg-transparent", "scale-100");
+              }
+            });
+          }
 
           // 2. Play main text entrance
-          const mainText = entry.target.querySelector(".main-text");
+          const mainText = target.querySelector(".main-text");
           if (mainText) {
-            gsap.killTweensOf(mainText);
             gsap.fromTo(
               mainText,
-              { y: -window.innerHeight, opacity: 0 },
+              { y: -100, opacity: 0 },
               {
                 y: 0,
                 opacity: 1,
+                duration: 1.2,
+                ease: "power4.out",
+                overwrite: true,
+              },
+            );
+          }
+
+          // 3. Staggered cards (Slide 4 & 6)
+          const cards = target.querySelectorAll(".burger-card, .review-card");
+          if (cards.length > 0) {
+            gsap.fromTo(
+              cards,
+              { y: 60, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "power2.out",
+                delay: 0.3,
+                overwrite: true,
+              },
+            );
+          }
+
+          // 4. Footer "Height Growth" animation
+          if (target.tagName === "FOOTER") {
+            gsap.fromTo(
+              target,
+              { paddingTop: "4rem", paddingBottom: "4rem" },
+              {
+                paddingTop: "13rem",
+                paddingBottom: "16rem",
                 duration: 1.5,
-                ease: "power3.out",
+                ease: "expo.out",
+                overwrite: true,
               },
             );
           }
         }
       });
     },
-    { threshold: 0.5 }, // Trigger when at least 50% of the slide is visible
+    { threshold: 0.2 }, // Lower threshold to trigger animations earlier
   );
 
-  sections.forEach((section) => observer.observe(section));
+  sections.forEach((s) => observer.observe(s));
+  if (footer) observer.observe(footer);
 
   // ── React to open/close (store fires immediately with current state) ──
   const unsubscribe = store.subscribe((isOpen) => {

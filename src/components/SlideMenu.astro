@@ -1,0 +1,77 @@
+---
+import { signatureBurgers } from "../data/menu";
+const burgers = signatureBurgers.slice(0, 3);
+---
+
+<section
+  id="slide-4"
+  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-[#1e1e1e]"
+>
+  <!-- Subtle top glow -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute top-0 left-1/2 h-64 w-2/3 -translate-x-1/2 rounded-full bg-yellow-400/15 blur-3xl"
+  >
+  </div>
+
+  <div
+    class="relative z-10 flex w-full max-w-6xl flex-col items-center gap-10 px-8"
+  >
+    <div class="flex flex-col items-center gap-3 text-center">
+      <span
+        class="text-sm font-semibold tracking-[0.3em] text-yellow-400 uppercase"
+        >Our Favorites</span
+      >
+      <h2 class="main-text text-[6vh] font-black text-white">
+        Signature <span class="text-yellow-400">Burgers</span>
+      </h2>
+    </div>
+
+    <!-- Burger cards -->
+    <div class="grid w-full grid-cols-3 gap-6">
+      {
+        burgers.map((b) => (
+          <div class="burger-card group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:-translate-y-2 hover:border-yellow-400/40 hover:shadow-2xl hover:shadow-yellow-400/10">
+            <!-- Image -->
+            <div class="relative aspect-4/3 overflow-hidden">
+              <img
+                src={b.image}
+                alt={b.name}
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+              <span
+                class={`absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-bold ${b.tagColor}`}
+              >
+                {b.tag}
+              </span>
+            </div>
+            <!-- Info -->
+            <div class="flex flex-1 flex-col gap-2 p-5">
+              <div class="flex items-start justify-between gap-2">
+                <h3 class="text-lg font-black leading-tight text-white">
+                  {b.name}
+                </h3>
+                <span class="shrink-0 text-xl font-bold text-yellow-400">
+                  {b.price}
+                </span>
+              </div>
+              <p class="text-sm font-medium italic text-white/60">{b.desc}</p>
+              <p class="mt-auto text-xs leading-relaxed text-white/40">
+                {b.ingredients}
+              </p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <a
+      href="/menu"
+      class="rounded-full border-2 border-yellow-400 px-8 py-3 text-base font-bold text-yellow-400 transition-all hover:bg-yellow-400 hover:text-black"
+    >
+      View Full Menu →
+    </a>
+  </div>
+</section>

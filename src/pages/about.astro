@@ -1,0 +1,131 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+---
+
+<Layout title="About Us | Dafe's Burger">
+  <Navbar />
+
+  <main
+    class="relative min-h-screen overflow-hidden bg-emerald-800 pt-32 pb-20"
+  >
+    <!-- Background Text -->
+    <p
+      aria-hidden="true"
+      class="pointer-events-none absolute top-1/2 left-[5%] -translate-y-1/2 text-[40dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.1)] [writing-mode:vertical-rl]"
+    >
+      TUNIS
+    </p>
+
+    <div class="relative z-10 mx-auto max-w-6xl px-8">
+      <!-- Hero Section -->
+      <div class="mb-32 flex flex-col items-center text-center">
+        <h1
+          class="text-8xl leading-none font-black tracking-tighter text-white uppercase md:text-[15rem]"
+        >
+          YAMMY
+        </h1>
+        <p
+          class="mt-4 text-3xl font-bold tracking-[0.3em] text-yellow-400 uppercase"
+        >
+          The Vibe Check
+        </p>
+      </div>
+
+      <!-- Story Grid -->
+      <div class="grid items-center gap-20 md:grid-cols-2">
+        <div class="flex flex-col gap-8">
+          <h2 class="text-5xl leading-tight font-black text-white">
+            Handcrafted <br />
+            <span class="text-yellow-400">with Passion</span>
+          </h2>
+          <p class="text-lg leading-relaxed text-white/70">
+            Founded in 2018 in the heart of Tunis, Dafe's Burger isn't just
+            about food—it's about the grit, the fire, and the flavor of our
+            streets. We believe a burger should be an experience, not a quick
+            fix.
+          </p>
+          <p class="text-lg leading-relaxed text-white/70">
+            Every morning, we source fresh ingredients from local markets. Our
+            patties are never frozen, our sauces are made from scratch, and our
+            vibes are always 100% authentic.
+          </p>
+
+          <div class="mt-6 flex gap-10">
+            <div class="flex flex-col">
+              <span class="text-5xl font-black text-yellow-400">100%</span>
+              <span
+                class="text-sm font-bold tracking-widest text-white/50 uppercase"
+                >Local Beef</span
+              >
+            </div>
+            <div class="flex flex-col">
+              <span class="text-5xl font-black text-yellow-400">0%</span>
+              <span
+                class="text-sm font-bold tracking-widest text-white/50 uppercase"
+                >Freezers</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div
+            class="group flex aspect-square items-center justify-center overflow-hidden rounded-4xl border border-white/10 bg-emerald-700/50"
+          >
+            <div
+              class="text-9xl font-black text-white/20 transition-transform duration-700 group-hover:scale-110"
+            >
+              DAFE
+            </div>
+          </div>
+          <div
+            class="absolute -bottom-10 -left-10 rotate-3 rounded-3xl bg-yellow-400 p-8 shadow-2xl"
+          >
+            <p class="text-xl font-black text-black uppercase italic">
+              "Best Burger in Town"
+            </p>
+            <p class="text-sm font-bold text-black/60">- Tunis Foodies</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Values -->
+      <div class="mt-40 grid gap-12 md:grid-cols-3">
+        <div
+          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+        >
+          <span class="text-4xl">🔥</span>
+          <h3 class="text-2xl font-black text-white uppercase">The Heat</h3>
+          <p class="text-sm leading-relaxed text-white/50">
+            We don't hold back. Our harissa blends and spicy house sauces are
+            designed for those who live for the kick.
+          </p>
+        </div>
+        <div
+          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+        >
+          <span class="text-4xl">🌿</span>
+          <h3 class="text-2xl font-black text-white uppercase">The Fresh</h3>
+          <p class="text-sm leading-relaxed text-white/50">
+            No shortcuts. Sourced daily, sliced daily. If it's not at its peak,
+            it's not on your plate.
+          </p>
+        </div>
+        <div
+          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+        >
+          <span class="text-4xl">🤝</span>
+          <h3 class="text-2xl font-black text-white uppercase">The Local</h3>
+          <p class="text-sm leading-relaxed text-white/50">
+            Supporting our neighbors. From the bakers who make our buns to the
+            farms providing our greens.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <SiteFooter />
+</Layout>

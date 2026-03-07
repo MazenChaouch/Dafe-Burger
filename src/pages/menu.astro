@@ -1,0 +1,176 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { signatureBurgers, sides, drinks, combos } from "../data/menu";
+---
+
+<Layout title="Menu | Dafe's Burger">
+  <Navbar />
+
+  <main class="min-h-screen bg-[#111] pt-32 pb-20">
+    <div class="mx-auto max-w-6xl px-8">
+      <!-- Header -->
+      <div class="mb-20 text-center">
+        <span
+          class="text-sm font-semibold tracking-[0.4em] text-yellow-400 uppercase"
+          >The Full Selection</span
+        >
+        <h1 class="mt-4 text-6xl font-black text-white md:text-8xl">
+          Our <span class="text-yellow-400">Menu</span>
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/50">
+          Crafted with passion in Tunis. Every ingredient is selected for
+          maximum flavor and local freshness.
+        </p>
+      </div>
+
+      <!-- Signature Burgers -->
+      <section class="mb-32">
+        <div class="mb-12 flex items-center gap-6">
+          <h2 class="text-3xl font-black tracking-wider text-white uppercase">
+            Signature Burgers
+          </h2>
+          <div class="h-px flex-1 bg-yellow-400/20"></div>
+        </div>
+
+        <div class="grid gap-10 md:grid-cols-2">
+          {
+            signatureBurgers.map((b) => (
+              <div class="group relative flex overflow-hidden rounded-3xl border border-white/5 bg-white/3 transition-all hover:border-yellow-400/30 hover:bg-white/5">
+                <div class="w-1/3 overflow-hidden">
+                  <img
+                    src={b.image}
+                    alt={b.name}
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                </div>
+                <div class="flex flex-1 flex-col p-8">
+                  <div class="flex items-start justify-between">
+                    <h3 class="text-2xl font-black text-white">{b.name}</h3>
+                    <span class="text-xl font-bold text-yellow-400">
+                      {b.price}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm font-medium text-yellow-400/80 italic">
+                    {b.desc}
+                  </p>
+                  <p class="mt-4 text-sm leading-relaxed text-white/40">
+                    {b.ingredients}
+                  </p>
+                  {b.tag && (
+                    <span
+                      class={`mt-6 inline-block w-fit rounded-full px-4 py-1 text-xs font-bold ${b.tagColor}`}
+                    >
+                      {b.tag}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <div class="grid gap-20 md:grid-cols-2">
+        <!-- Sides -->
+        <section>
+          <div class="mb-10 flex items-center gap-4">
+            <h2 class="text-2xl font-black tracking-wider text-white uppercase">
+              The Sides
+            </h2>
+            <div class="h-px flex-1 bg-yellow-400/20"></div>
+          </div>
+          <div class="flex flex-col gap-8">
+            {
+              sides.map((s) => (
+                <div class="group flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-bold text-white transition-colors group-hover:text-yellow-400">
+                      {s.name}
+                    </h3>
+                    <p class="text-xs text-white/40">{s.ingredients}</p>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <div class="h-px w-12 bg-white/10 transition-all group-hover:w-20 group-hover:bg-yellow-400/40" />
+                    <span class="font-bold text-white">{s.price}</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <!-- Drinks -->
+        <section>
+          <div class="mb-10 flex items-center gap-4">
+            <h2 class="text-2xl font-black tracking-wider text-white uppercase">
+              Refreshments
+            </h2>
+            <div class="h-px flex-1 bg-yellow-400/20"></div>
+          </div>
+          <div class="flex flex-col gap-8">
+            {
+              drinks.map((d) => (
+                <div class="group flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-bold text-white transition-colors group-hover:text-yellow-400">
+                      {d.name}
+                    </h3>
+                    <p class="text-xs text-white/40">{d.ingredients}</p>
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <div class="h-px w-12 bg-white/10 transition-all group-hover:w-20 group-hover:bg-yellow-400/40" />
+                    <span class="font-bold text-white">{d.price}</span>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+      </div>
+
+      <!-- Combos / Special Offers -->
+      <section class="mt-32 rounded-[3rem] bg-yellow-400 p-12 md:p-20">
+        <div class="mb-12 text-center md:text-left">
+          <h2 class="text-4xl font-black text-black uppercase md:text-6xl">
+            Value Combos
+          </h2>
+          <p class="mt-4 font-medium text-black/60">
+            Bundle your favorites and save more.
+          </p>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2">
+          {
+            combos.map((c) => (
+              <div class="rounded-3xl border-2 border-black/10 bg-black/5 p-10 backdrop-blur-sm transition-all hover:bg-black/10">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <h3 class="text-2xl font-black text-black">{c.name}</h3>
+                    <p class="mt-1 text-sm font-bold italic opacity-60">
+                      {c.desc}
+                    </p>
+                  </div>
+                  <span class="text-3xl font-black text-black">{c.price}</span>
+                </div>
+                <p class="mt-6 font-bold text-black/80">{c.items}</p>
+                <button class="mt-8 w-full rounded-2xl bg-black py-4 font-black tracking-widest text-white uppercase transition-transform hover:scale-[1.02] active:scale-[0.98]">
+                  Select Combo
+                </button>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <SiteFooter />
+</Layout>
+
+<style>
+  /* Base transitions are handled by Tailwind, but custom ones for complex cards */
+  .group:hover img {
+    transform: scale(1.1);
+  }
+</style>

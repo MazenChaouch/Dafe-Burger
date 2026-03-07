@@ -1,0 +1,142 @@
+---
+// Slide 3 – Fresh Ingredients Always
+import { Image } from "astro:assets";
+import tomato from "../assets/burger/tomato.png";
+import lettuce from "../assets/burger/letuce.png";
+import cheese from "../assets/burger/cheese.png";
+import onions from "../assets/burger/onions.png";
+import patty from "../assets/burger/meat.png";
+---
+
+<section
+  id="slide-3"
+  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden"
+  style="background: radial-gradient(ellipse at center, #4CAF50 0%, #1B5E20 60%);"
+>
+  <!-- Decorative vertical text -->
+  <p
+    aria-hidden="true"
+    class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent select-none [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
+  >
+    FRESH
+  </p>
+  <p
+    aria-hidden="true"
+    class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent select-none [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
+  >
+    LOCAL
+  </p>
+
+  <!-- Center content -->
+  <div class="relative z-10 flex flex-col items-center gap-6 text-center">
+    <div
+      class="slide-badge inline-block rounded-full border border-white/30 bg-white/10 px-4 py-1 text-sm font-semibold tracking-widest text-white/80 uppercase backdrop-blur-sm"
+    >
+      Sourced Daily · Tunis Markets
+    </div>
+
+    <h2
+      class="main-text text-[8vh] leading-tight font-black text-white drop-shadow-lg"
+    >
+      Fresh Ingredients<br /><span class="text-yellow-300">Always.</span>
+    </h2>
+
+    <p class="slide-sub max-w-md text-[2vh] leading-relaxed text-white/70">
+      From Tunis medina markets to your plate in under 24 hours.<br />
+      No freezers. No shortcuts. Just flavor.
+    </p>
+
+    <!-- Ingredient pills -->
+    <div class="slide-pills flex flex-wrap justify-center gap-3">
+      {
+        [
+          "🍅 Tomato",
+          "🥬 Lettuce",
+          "🧅 Onion",
+          "🧀 Cheese",
+          "🌿 Herbs",
+          "🥩 Local Beef",
+        ].map((item) => (
+          <span class="rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+            {item}
+          </span>
+        ))
+      }
+    </div>
+
+    <a
+      href="#slide-4"
+      class="mt-2 inline-block rounded-full bg-yellow-400 px-8 py-3 text-base font-bold tracking-wide text-black transition-all hover:scale-105 hover:bg-yellow-300 active:scale-95"
+    >
+      Discover the Menu →
+    </a>
+  </div>
+
+  <!-- Floating ingredient decorations -->
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 overflow-hidden"
+  >
+    <div
+      class="ingredient-float absolute top-[15%] left-[22%] w-[12vw] opacity-80"
+      style="animation: floatA 6s ease-in-out infinite;"
+    >
+      <Image src={tomato} alt="" class="w-full object-contain blur-[2px]" />
+    </div>
+    <div
+      class="ingredient-float absolute top-[25%] right-[20%] w-[15vw] opacity-70"
+      style="animation: floatB 7s ease-in-out infinite;"
+    >
+      <Image src={lettuce} alt="" class="w-full object-contain blur-[1px]" />
+    </div>
+    <div
+      class="ingredient-float absolute bottom-[20%] left-[18%] w-[14vw] opacity-75"
+      style="animation: floatA 8s ease-in-out 1s infinite;"
+    >
+      <Image src={onions} alt="" class="w-full object-contain blur-[2px]" />
+    </div>
+    <div
+      class="ingredient-float absolute right-[22%] bottom-[15%] w-[13vw] opacity-85"
+      style="animation: floatB 5s ease-in-out 0.5s infinite;"
+    >
+      <Image src={cheese} alt="" class="w-full object-contain blur-[1px]" />
+    </div>
+    <div
+      class="ingredient-float absolute top-[55%] left-[12%] w-[16vw] opacity-60"
+      style="animation: floatB 6.5s ease-in-out 1.5s infinite;"
+    >
+      <Image src={patty} alt="" class="w-full object-contain blur-[3px]" />
+    </div>
+    <div
+      class="ingredient-float absolute top-[60%] right-[15%] w-[10vw] opacity-90"
+      style="animation: floatA 9s ease-in-out 2s infinite;"
+    >
+      <Image
+        src={tomato}
+        alt=""
+        class="w-full scale-x-[-1] rotate-45 object-contain blur-[1px]"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes floatA {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(-5deg);
+    }
+    50% {
+      transform: translateY(-30px) rotate(5deg);
+    }
+  }
+  @keyframes floatB {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(8deg);
+    }
+    50% {
+      transform: translateY(-25px) rotate(-8deg);
+    }
+  }
+</style>

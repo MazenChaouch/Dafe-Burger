@@ -54,28 +54,35 @@
     <li
       class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
     >
-      Home
+      <a href="/#slide-1" class="menu-item-link inline-block w-full">Home</a>
     </li>
     <li
       class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
     >
-      Menu
+      <a href="/menu" class="menu-item-link inline-block w-full">Menu</a>
     </li>
     <li
       class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
     >
-      About Us
+      <a href="/about" class="menu-item-link inline-block w-full">About Us</a>
     </li>
     <li
       class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
     >
-      Contact
+      <a href="/#slide-5" class="menu-item-link inline-block w-full">Location</a
+      >
+    </li>
+    <li
+      class="menu-link -translate-y-4 cursor-pointer opacity-0 transition-transform hover:scale-110"
+    >
+      <a href="/#slide-6" class="menu-item-link inline-block w-full">Reviews</a>
     </li>
   </ul>
 </div>
 
 <script>
   import gsap from "gsap";
+  import { store } from "../store";
 
   // ── Scope all selectors to the nav element to be safe if component
   //    is ever rendered multiple times or alongside other navs.
@@ -87,11 +94,13 @@
   const lineMid = nav.querySelector<SVGLineElement>(".menu-line-mid")!;
   const lineBot = nav.querySelector<SVGLineElement>(".menu-line-bot")!;
   const titleBurger = nav.querySelector<HTMLElement>("#title-burger")!;
+  const dotNavigator = document.getElementById("dot-navigator");
 
   let isMenuOpen = false;
 
   menuBtn.addEventListener("click", () => {
-    isMenuOpen = !isMenuOpen;
+    store.toggle();
+    isMenuOpen = store.isOpen;
 
     // Keep aria-expanded in sync with visual state
     menuBtn.setAttribute("aria-expanded", String(isMenuOpen));
@@ -132,6 +141,14 @@
         },
         "-=0.3",
       );
+
+      if (dotNavigator) {
+        gsap.to(dotNavigator, {
+          opacity: 0,
+          pointerEvents: "none",
+          duration: 0.3,
+        });
+      }
 
       // Morph hamburger → X
       gsap.to(lineTop, {
@@ -184,6 +201,15 @@
       );
 
       // Morph X → hamburger
+      if (dotNavigator) {
+        gsap.to(dotNavigator, {
+          opacity: 1,
+          pointerEvents: "auto",
+          duration: 0.3,
+          delay: 0.4,
+        });
+      }
+
       gsap.to([lineTop, lineMid, lineBot], {
         y: 0,
         rotation: 0,
@@ -201,5 +227,15 @@
         ease: "power2.inOut",
       });
     }
+  });
+
+  // Close the menu automatically when a link inside it is clicked
+  const itemLinks = menuOverlay.querySelectorAll(".menu-item-link");
+  itemLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (isMenuOpen) {
+        menuBtn.click();
+      }
+    });
   });
 </script>
