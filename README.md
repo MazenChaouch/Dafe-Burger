@@ -1,58 +1,62 @@
-# 🍔 Dafe's Burger — High-Performance Astro Template
+# 🍔 Berger-in-Motion — Premium Astro Template
 
-A premium, motion-driven restaurant template built with **Astro 5.0**, **Tailwind CSS 4.0**, and **GSAP**. Designed for high visual impact and smooth multi-page navigation.
+A high-performance, animation-driven restaurant template built with **Astro 5.0**, **Tailwind CSS 4.0**, and **GSAP**. This template is designed for businesses that want a strong visual identity with fluid, premium interactions.
 
-![Banner](public/favicon.svg) <!-- Replace with a proper banner image -->
+![Open Graph Image](public/og-image.png)
 
 ## 🚀 Technical Stack
 
-- **Framework:** [Astro 5](https://astro.build/) (Static Site Generation)
+- **Framework:** [Astro 5](https://astro.build/) (Static Site Generation for ultra-fast performance)
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
-- **Animations:** [GSAP](https://gsap.com/) (Scroll-triggered entrance & state-driven interactions)
-- **State Management:** Minimalist vanilla JS Store (`src/store.ts`)
-- **Icons:** Custom SVG components
-
-## 📂 Project Structure
-
-```text
-src/
-├── assets/          # Static assets & optimized images
-├── components/      # Reusable UI components
-├── config/          # Centralized site & navigation settings
-├── data/            # Content data (menu, testimonials, etc.)
-├── layouts/         # Shared page skeletons
-├── pages/           # Application routes (Home, Menu, About)
-├── styles/          # Global styles & Tailwind layers
-└── store.ts         # Global client-side state
-```
+- **Animations:** [GSAP](https://gsap.com/) (ScrollTrigger, staggered animations, state-driven transitions)
+- **State Management:** Minimalist vanilla JS Store (`src/store.ts`) for cross-component interactions.
+- **UX:** [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/) for seamless multi-page routing.
 
 ## 🛠️ Key Features
 
-- **Snap Scroll Experience:** A native-feeling single-page navigation on the homepage.
-- **Dynamic Routing:** Seamless transitions between landing sections and dedicated pages.
-- **Optimized Performance:** 100/100 Lighthouse scores through Astro's partial hydration.
-- **Micro-Animations:** Fluid GSAP interactions for a premium 'alive' feel.
-- **Centralized Content:** Easy updates via `src/data/` configuration files.
+- **Snap Scroll Home:** A smooth, app-like scroll experience for landing sections.
+- **Data-Driven Burger Interaction:** A fully animated, "exploded" burger component controlled by a central store.
+- **Dynamic Floating Elements:** Interactive chips and background effects that react to site state.
+- **SEO Optimized:** Comprehensive Open Graph (OG), Twitter, and meta-tag support.
+- **Template Architecture:** All content is extracted into data files for easy white-labeling.
+
+## 📂 Project Structure & Customization
+
+The site is built to be a template. You can customize the entire experience by editing these files:
+
+### 1. Global Configuration (`src/config/`)
+
+- **`site.ts`**: Brand name, SEO description, and social media handles.
+- **`navigation.ts`**: Link paths and labels for the navigation dots and main menu.
+
+### 2. Content Data (`src/data/`)
+
+- **`burgerLayers.ts`**: Edit burger ingredients, caloric info, and stack order.
+- **`chipsData.ts`**: Adjust the number, size, and positions of the floating chips.
+- **`home.ts`**: Titles, colors, and vertical "decorative" text for landing sections.
+- **`menu.ts`**: Full menu items, pricing, tags, and category lists.
+- **`testimonials.ts`**: Customer reviews and rating summaries.
+- **`about.ts`**: The brand story, mission, and stats.
 
 ## 🏁 Getting Started
 
-1. **Install Dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-2. **Start Dev Server:**
-
-   ```bash
-   npm run dev
-   ```
-
-3. **Build for Production:**
-   ```bash
-   npm run build
-   ```
+1.  **Clone & Install:**
+    ```bash
+    npm install
+    ```
+2.  **Start Development:**
+    ```bash
+    npm run dev
+    ```
+3.  **Build for Production:**
+    ```bash
+    npm run build
+    ```
 
 ## 📝 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+_Made with 🔥 by Antigravity_

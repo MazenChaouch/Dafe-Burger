@@ -43,15 +43,17 @@
 
   /* Smooth scroll-snap container */
   .scroll-container {
+    scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
   }
 
-  /* Each snap section eases into place instead of hard-locking */
+  /* Each snap section eases into place */
   .snap-section,
   #site-footer {
     scroll-snap-stop: always;
+    scroll-snap-align: start;
   }
 }
 

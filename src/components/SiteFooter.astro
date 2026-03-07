@@ -1,12 +1,12 @@
 ---
 import { SITE_CONFIG } from "../config/site";
 import { NAV_LINKS } from "../config/navigation";
-// Footer – last item in the scroll container
+import { SLIDE_LOCATION_DATA } from "../data/home";
 ---
 
 <footer
   id="site-footer"
-  class="relative w-full shrink-0 snap-start bg-[#111111] px-8 py-24"
+  class="relative w-full shrink-0 bg-[#111111] px-8 py-24"
 >
   <!-- Top accent line -->
   <div
@@ -115,7 +115,7 @@ import { NAV_LINKS } from "../config/navigation";
             {SITE_CONFIG.contact.email}
           </a>
           <p class="flex items-center gap-2">
-            <span>🕐</span> Open daily 11:00 – 23:00
+            <span>🕐</span> Open daily {SLIDE_LOCATION_DATA.hours[0].time}
           </p>
         </div>
       </div>
@@ -126,7 +126,8 @@ import { NAV_LINKS } from "../config/navigation";
       class="mt-12 flex items-center justify-between border-t border-white/5 pt-6"
     >
       <p class="text-xs text-white/25">
-        © 2026 Dafe's Burger – Tunis. All rights reserved.
+        © {new Date().getFullYear()}
+        {SITE_CONFIG.name} – Tunis. All rights reserved.
       </p>
       <p class="text-xs text-white/20">Handcrafted in Tunis 🇹🇳</p>
     </div>

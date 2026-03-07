@@ -9,6 +9,7 @@ import SlideLocation from "../components/SlideLocation.astro";
 import SlideTestimonials from "../components/SlideTestimonials.astro";
 import DotNavigator from "../components/DotNavigator.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import { HOME_SLIDES } from "../data/home";
 ---
 
 <Layout>
@@ -16,93 +17,61 @@ import SiteFooter from "../components/SiteFooter.astro";
   <DotNavigator />
 
   <div
-    class="scroll-container h-screen w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto scroll-smooth"
+    class="scroll-container h-screen w-full overflow-x-hidden overflow-y-auto"
   >
-    <!-- Red Page / Slide 1 -->
-    <section
-      id="slide-1"
-      class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#FF8686] to-[#FF0000] to-60%"
-    >
-      <!-- Decorative vertical text — presentational, not headings -->
-      <p
-        aria-hidden="true"
-        class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
-      >
-        YAMMY
-      </p>
-      <p
-        aria-hidden="true"
-        class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
-      >
-        BURGER
-      </p>
-
-      <div class="w-fit">
-        <!-- Single <h1> per page -->
-        <h1
-          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white opacity-0"
+    {
+      HOME_SLIDES.map((slide, i) => (
+        <section
+          id={slide.id}
+          class="snap-section relative flex h-screen w-full shrink-0 items-center justify-center overflow-hidden bg-radial from-(--bg-from) to-(--bg-to) to-60%"
+          style={`--bg-from: ${slide.bgColorFrom}; --bg-to: ${slide.bgColorTo}`}
         >
-          The Best Burger in Town
-        </h1>
-        <Chips />
-        <Burger />
-        <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
-          <button
-            id="toggle-hint"
-            class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
-            >Click on burger</button
+          {/* Decorative vertical text */}
+          <p
+            aria-hidden="true"
+            class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
           >
-        </div>
-        <!-- Scroll indicator -->
-        <div
-          class="absolute bottom-[5%] left-1/2 -translate-x-1/2"
-          aria-hidden="true"
-        >
-          <div class="h-8 w-5 rounded-2xl border-[3px] border-white">
-            <div
-              class="mx-auto size-1.5 translate-y-1 animate-bounce rounded-full bg-white"
-            >
+            {slide.verticalTextLeft}
+          </p>
+          <p
+            aria-hidden="true"
+            class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
+          >
+            {slide.verticalTextRight}
+          </p>
+
+          <div class="w-fit">
+            {i === 0 ? (
+              <h1 class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white">
+                {slide.title}
+              </h1>
+            ) : (
+              <h2 class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white">
+                {slide.title}
+              </h2>
+            )}
+            <Chips />
+            <Burger />
+            <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
+              <button class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black">
+                Click on burger
+              </button>
             </div>
+
+            {i === 0 && (
+              <div
+                class="absolute bottom-[5%] left-1/2 -translate-x-1/2"
+                aria-hidden="true"
+              >
+                <div class="h-8 w-5 rounded-2xl border-[3px] border-white">
+                  <div class="mx-auto size-1.5 translate-y-1 animate-bounce rounded-full bg-white" />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Green Page / Slide 2 -->
-    <section
-      id="slide-2"
-      class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-radial from-[#66D97A] to-[#0A8022] to-60%"
-    >
-      <!-- Decorative vertical text -->
-      <p
-        aria-hidden="true"
-        class="absolute top-1/2 left-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:sideways-lr]"
-      >
-        YAMMY
-      </p>
-      <p
-        aria-hidden="true"
-        class="absolute top-1/2 right-[12%] -translate-y-1/2 text-[28dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_white] [writing-mode:vertical-rl]"
-      >
-        BURGER
-      </p>
-
-      <div class="w-fit">
-        <h2
-          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white opacity-0"
-        >
-          Fresh Ingredients Always
-        </h2>
-        <Chips />
-        <Burger />
-        <div class="absolute top-[85%] left-1/2 -translate-x-1/2">
-          <button
-            class="toggle-btn rounded-full bg-white px-4 py-1.5 font-semibold whitespace-nowrap text-black"
-            >Click on burger</button
-          >
-        </div>
-      </div>
-    </section>
+        </section>
+      ))
+    }
 
     <SlideMenu />
     <SlideLocation />
@@ -162,13 +131,14 @@ import SiteFooter from "../components/SiteFooter.astro";
               if (mainText) {
                 gsap.fromTo(
                   mainText,
-                  { y: -80, opacity: 0 },
+                  { y: -80, autoAlpha: 0 },
                   {
                     y: 0,
-                    opacity: 1,
+                    autoAlpha: 1,
                     duration: 1,
                     ease: "expo.out",
                     overwrite: true,
+                    clearProps: "y",
                   },
                 );
               }
@@ -180,15 +150,16 @@ import SiteFooter from "../components/SiteFooter.astro";
               if (cards.length > 0) {
                 gsap.fromTo(
                   cards,
-                  { y: 20, opacity: 0 },
+                  { y: 20, autoAlpha: 0 },
                   {
                     y: 0,
-                    opacity: 1,
+                    autoAlpha: 1,
                     duration: 0.5,
                     stagger: 0.09,
                     ease: "expo.out",
                     delay: 0.1,
                     overwrite: true,
+                    clearProps: "y",
                   },
                 );
               }
@@ -206,26 +177,27 @@ import SiteFooter from "../components/SiteFooter.astro";
     // ── Wait for loading screen to finish, THEN start animations ──
     const win = window as Window & { __loaderDone?: boolean };
 
-    if (win.__loaderDone) {
-      // Loader already finished (e.g. View Transition navigation) — start immediately
-      initScrollAnimations();
-    } else {
-      // First visit — wait for loader:complete event
-      document.addEventListener(
-        "loader:complete",
-        () => {
-          initScrollAnimations();
-        },
-        { once: true },
-      );
-    }
+    // Tiny delay to ensure DOM is fully ready after View Transition swap
+    setTimeout(() => {
+      if (win.__loaderDone) {
+        initScrollAnimations();
+      } else {
+        document.addEventListener(
+          "loader:complete",
+          () => {
+            initScrollAnimations();
+          },
+          { once: true },
+        );
+      }
+    }, 50);
 
     // ── Burger store reactions (these can run immediately) ──
     const unsubscribe = burgerStore.subscribe((isOpen: boolean) => {
       mainTexts.forEach((mainText) => {
         gsap.to(mainText, {
           y: isOpen ? -window.innerHeight : 0,
-          opacity: isOpen ? 0 : 1,
+          autoAlpha: isOpen ? 0 : 1,
           duration: 0.7,
           ease: isOpen ? "sine.out" : "back.out(1)",
           overwrite: true,
@@ -234,7 +206,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 
       toggleBtns.forEach((toggleBtn) => {
         gsap.to(toggleBtn, {
-          opacity: isOpen ? 0 : 1,
+          autoAlpha: isOpen ? 0 : 1,
           y: isOpen ? 20 : 0,
           duration: 0.3,
           delay: isOpen ? 0 : 0.2,

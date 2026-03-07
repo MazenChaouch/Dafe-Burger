@@ -1,16 +1,12 @@
 ---
-// Slide 5 – Location & Hours
-const hours = [
-  { days: "Mon – Thu", time: "11:00 – 23:00" },
-  { days: "Friday", time: "11:00 – 01:00" },
-  { days: "Saturday", time: "11:00 – 01:00" },
-  { days: "Sunday", time: "11:00 – 23:00" },
-];
+import { SLIDE_LOCATION_DATA } from "../data/home";
+const { title, subtitle, address, contact, hours, mapUrl, directionsUrl } =
+  SLIDE_LOCATION_DATA;
 ---
 
 <section
   id="slide-5"
-  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-[#1a2b40]"
+  class="snap-section relative flex h-screen w-full shrink-0 items-center justify-center overflow-hidden bg-[#1a2b40]"
 >
   <!-- Background glow -->
   <div
@@ -30,10 +26,11 @@ const hours = [
     <div class="flex flex-col items-center gap-2 text-center">
       <span
         class="text-sm font-semibold tracking-[0.3em] text-yellow-400 uppercase"
-        >Find Us</span
+        >{subtitle}</span
       >
       <h2 class="main-text text-[6vh] font-black text-white">
-        Come <span class="text-yellow-400">Hungry</span>
+        {title.split(" ")[0]}
+        <span class="text-yellow-400">{title.split(" ")[1]}</span>
       </h2>
     </div>
 
@@ -45,11 +42,11 @@ const hours = [
           class="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-white/5"
         >
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3193.4!2d10.1815!3d36.8065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12fd337f5e7ef543%3A0xd671924e714a0275!2sAv.+Habib+Bourguiba%2C+Tunis!5e0!3m2!1sen!2stn!4v1"
+            src={mapUrl}
             class="h-full w-full border-0 grayscale"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            title="Dafe's Burger location on map"></iframe>
+            title={`${title} location on map`}></iframe>
           <!-- Dark overlay to match theme -->
           <div
             class="pointer-events-none absolute inset-0 bg-[#0D1B2A]/30 mix-blend-multiply"
@@ -65,23 +62,25 @@ const hours = [
             <span class="mt-0.5 text-2xl">📍</span>
             <div>
               <p class="text-sm font-bold tracking-wide text-white">
-                42 Av. Habib Bourguiba
+                {address.line1}
               </p>
-              <p class="text-sm text-white/50">Tunis 1000, Tunisia</p>
+              <p class="text-sm text-white/50">{address.line2}</p>
             </div>
           </div>
           <div class="mt-4 flex flex-wrap gap-4">
             <a
-              href="tel:+21671123456"
+              href={`tel:${contact.phone.replace(/\s+/g, "")}`}
               class="flex items-center gap-2 text-sm text-white/70 transition hover:text-yellow-400"
             >
-              <span>📞</span> +216 71 123 456
+              <span>📞</span>
+              {contact.phone}
             </a>
             <a
-              href="https://instagram.com/dafesburger"
+              href={`https://instagram.com/${contact.instagram.replace("@", "")}`}
               class="flex items-center gap-2 text-sm text-white/70 transition hover:text-yellow-400"
             >
-              <span>📷</span> @dafesburger
+              <span>📷</span>
+              {contact.instagram}
             </a>
           </div>
         </div>
@@ -114,7 +113,7 @@ const hours = [
         </div>
 
         <a
-          href="https://maps.google.com/?q=42+Av+Habib+Bourguiba+Tunis"
+          href={directionsUrl}
           target="_blank"
           rel="noopener"
           class="rounded-full bg-yellow-400 py-3 text-center text-base font-bold text-black transition-all hover:scale-105 hover:bg-yellow-300"

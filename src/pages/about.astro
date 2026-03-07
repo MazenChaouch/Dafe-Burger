@@ -2,127 +2,107 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import { ABOUT_DATA } from "../data/about";
+const { hero, story, values } = ABOUT_DATA;
 ---
 
-<Layout title="About Us | Dafe's Burger">
+<Layout title={`About Us | Dafe's Burger`}>
   <Navbar />
 
   <main
     class="relative min-h-screen overflow-hidden bg-emerald-800 pt-32 pb-20"
   >
-    <!-- Background Text -->
+    {/* Background Text */}
     <p
       aria-hidden="true"
-      class="bg-text pointer-events-none absolute top-1/2 left-[5%] -translate-y-1/2 text-[40dvh] leading-none font-bold text-transparent opacity-0 [-webkit-text-stroke:1px_rgba(255,255,255,0.1)] [writing-mode:vertical-rl]"
+      class="bg-text pointer-events-none absolute top-1/2 left-[5%] -translate-y-1/2 text-[40dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.1)] [writing-mode:vertical-rl]"
     >
-      TUNIS
+      {hero.bgText}
     </p>
 
     <div class="relative z-10 mx-auto max-w-6xl px-8">
-      <!-- Hero Section -->
+      {/* Hero Section */}
       <div class="mb-32 flex flex-col items-center text-center">
         <h1
-          class="hero-title text-8xl leading-none font-black tracking-tighter text-white uppercase opacity-0 md:text-[15rem]"
+          class="hero-title text-8xl leading-none font-black tracking-tighter text-white uppercase md:text-[15rem]"
         >
-          YAMMY
+          {hero.title}
         </h1>
         <p
-          class="hero-subtitle mt-4 text-3xl font-bold tracking-[0.3em] text-yellow-400 uppercase opacity-0"
+          class="hero-subtitle mt-4 text-3xl font-bold tracking-[0.3em] text-yellow-400 uppercase"
         >
-          The Vibe Check
+          {hero.subtitle}
         </p>
       </div>
 
-      <!-- Story Grid -->
+      {/* Story Grid */}
       <div class="grid items-center gap-20 md:grid-cols-2">
-        <div class="story-content flex flex-col gap-8 opacity-0">
+        <div class="story-content flex flex-col gap-8">
           <h2 class="text-5xl leading-tight font-black text-white">
-            Handcrafted <br />
-            <span class="text-yellow-400">with Passion</span>
+            {story.title}
+            <br />
+            <span class="text-yellow-400">{story.titleAccent}</span>
           </h2>
-          <p class="text-lg leading-relaxed text-white/70">
-            Founded in 2018 in the heart of Tunis, Dafe's Burger isn't just
-            about food—it's about the grit, the fire, and the flavor of our
-            streets. We believe a burger should be an experience, not a quick
-            fix.
-          </p>
-          <p class="text-lg leading-relaxed text-white/70">
-            Every morning, we source fresh ingredients from local markets. Our
-            patties are never frozen, our sauces are made from scratch, and our
-            vibes are always 100% authentic.
-          </p>
+          {
+            story.paragraphs.map((p) => (
+              <p class="text-lg leading-relaxed text-white/70">{p}</p>
+            ))
+          }
 
           <div class="mt-6 flex gap-10">
-            <div class="flex flex-col">
-              <span class="text-5xl font-black text-yellow-400">100%</span>
-              <span
-                class="text-sm font-bold tracking-widest text-white/50 uppercase"
-                >Local Beef</span
-              >
-            </div>
-            <div class="flex flex-col">
-              <span class="text-5xl font-black text-yellow-400">0%</span>
-              <span
-                class="text-sm font-bold tracking-widest text-white/50 uppercase"
-                >Freezers</span
-              >
-            </div>
+            {
+              story.stats.map((s) => (
+                <div class="flex flex-col">
+                  <span class="text-5xl font-black text-yellow-400">
+                    {s.value}
+                  </span>
+                  <span class="text-sm font-bold tracking-widest text-white/50 uppercase">
+                    {s.label}
+                  </span>
+                </div>
+              ))
+            }
           </div>
         </div>
 
-        <div class="story-image relative opacity-0">
+        <div class="story-image relative">
           <div
             class="group flex aspect-square items-center justify-center overflow-hidden rounded-4xl border border-white/10 bg-emerald-700/50"
           >
             <div
               class="text-9xl font-black text-white/20 transition-transform duration-700 group-hover:scale-110"
             >
-              DAFE
+              {story.imagePlaceholder}
             </div>
           </div>
           <div
             class="absolute -bottom-10 -left-10 rotate-3 rounded-3xl bg-yellow-400 p-8 shadow-2xl"
           >
             <p class="text-xl font-black text-black uppercase italic">
-              "Best Burger in Town"
+              "{story.testimonial.text}"
             </p>
-            <p class="text-sm font-bold text-black/60">- Tunis Foodies</p>
+            <p class="text-sm font-bold text-black/60">
+              - {story.testimonial.author}
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- Values -->
+      {/* Values */}
       <div class="mt-40 grid gap-12 md:grid-cols-3">
-        <div
-          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
-        >
-          <span class="text-4xl">🔥</span>
-          <h3 class="text-2xl font-black text-white uppercase">The Heat</h3>
-          <p class="text-sm leading-relaxed text-white/50">
-            We don't hold back. Our harissa blends and spicy house sauces are
-            designed for those who live for the kick.
-          </p>
-        </div>
-        <div
-          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
-        >
-          <span class="text-4xl">🌿</span>
-          <h3 class="text-2xl font-black text-white uppercase">The Fresh</h3>
-          <p class="text-sm leading-relaxed text-white/50">
-            No shortcuts. Sourced daily, sliced daily. If it's not at its peak,
-            it's not on your plate.
-          </p>
-        </div>
-        <div
-          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
-        >
-          <span class="text-4xl">🤝</span>
-          <h3 class="text-2xl font-black text-white uppercase">The Local</h3>
-          <p class="text-sm leading-relaxed text-white/50">
-            Supporting our neighbors. From the bakers who make our buns to the
-            farms providing our greens.
-          </p>
-        </div>
+        {
+          values.map((v) => (
+            <div class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm">
+              <span class="text-4xl">{v.emoji}</span>
+              <h3 class="text-2xl font-black text-white uppercase">
+                {v.title}
+              </h3>
+              <p class="text-sm leading-relaxed text-white/50">
+                {v.description}
+              </p>
+            </div>
+          ))
+        }
       </div>
     </div>
   </main>
@@ -139,84 +119,76 @@ import SiteFooter from "../components/SiteFooter.astro";
     // Kill any existing ScrollTriggers from previous page visits
     ScrollTrigger.getAll().forEach((t) => t.kill());
 
-    // Hero Animations
-    const tl = gsap.timeline();
+    // Clear ALL leftover GSAP inline styles from a previous visit.
+    // This guarantees every element starts at its natural visible CSS state.
+    gsap.set(
+      ".hero-title, .hero-subtitle, .bg-text, .story-content, .story-image, .value-card",
+      { clearProps: "all" },
+    );
+
+    // ── Single entrance timeline for everything above the fold ──
+    // No ScrollTrigger = no risk of elements getting stuck invisible.
+    const tl = gsap.timeline({ delay: 0.1 });
+
     tl.fromTo(
       ".hero-title",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, ease: "expo.out", delay: 0.1 },
+      { y: 30, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out" },
     )
       .fromTo(
         ".hero-subtitle",
-        { y: 15, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+        { y: 15, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.7, ease: "expo.out" },
         "-=0.7",
       )
       .fromTo(
         ".bg-text",
-        { x: -20, opacity: 0 },
-        { x: 0, opacity: 1, duration: 1.5, ease: "expo.out" },
-        "0",
+        { x: -20, autoAlpha: 0 },
+        { x: 0, autoAlpha: 1, duration: 1.5, ease: "expo.out" },
+        0,
+      )
+      .fromTo(
+        ".story-content",
+        { y: 30, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 1, ease: "expo.out" },
+        "-=0.6",
+      )
+      .fromTo(
+        ".story-image",
+        { scale: 0.96, autoAlpha: 0 },
+        { scale: 1, autoAlpha: 1, duration: 1, ease: "expo.out" },
+        "-=0.7",
       );
 
-    // Story Grid Animations
-    gsap.fromTo(
-      ".story-content",
-      { y: 20, opacity: 0 },
-      {
-        scrollTrigger: {
-          trigger: ".story-content",
-          start: "top 90%",
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "expo.out",
+    // ── Value cards: these are far below the fold, so ScrollTrigger is safe ──
+    gsap.from(".value-card", {
+      scrollTrigger: {
+        trigger: ".value-card",
+        start: "top 98%",
+        toggleActions: "play none none none",
       },
-    );
+      y: 30,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.1,
+      ease: "expo.out",
+      immediateRender: false,
+    });
 
-    gsap.fromTo(
-      ".story-image",
-      { scale: 0.98, opacity: 0 },
-      {
-        scrollTrigger: {
-          trigger: ".story-image",
-          start: "top 90%",
-        },
-        scale: 1,
-        opacity: 1,
-        duration: 0.8,
-        ease: "expo.out",
-      },
-    );
-
-    // Value Cards Animations
-    gsap.fromTo(
-      ".value-card",
-      { y: 30, opacity: 0 },
-      {
-        scrollTrigger: {
-          trigger: ".value-card",
-          start: "top 95%",
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "expo.out",
-      },
-    );
+    ScrollTrigger.refresh();
   }
 
   document.addEventListener("astro:page-load", () => {
-    // Wait for loader on first visit, run immediately on subsequent navigations
     const win = window as Window & { __loaderDone?: boolean };
-    if (win.__loaderDone) {
-      initAnimations();
-    } else {
-      document.addEventListener("loader:complete", () => initAnimations(), {
-        once: true,
-      });
-    }
+
+    setTimeout(() => {
+      if (win.__loaderDone) {
+        initAnimations();
+      } else {
+        document.addEventListener("loader:complete", () => initAnimations(), {
+          once: true,
+        });
+      }
+    }, 60);
   });
 </script>

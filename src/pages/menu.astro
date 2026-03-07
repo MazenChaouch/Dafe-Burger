@@ -8,10 +8,28 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
 <Layout title="Menu | Dafe's Burger">
   <Navbar />
 
-  <main class="min-h-screen bg-[#111] pt-32 pb-20">
-    <div class="mx-auto max-w-6xl px-8">
+  <main class="relative min-h-screen bg-[#111] pt-32 pb-20">
+    <!-- Ambient background glows -->
+    <div
+      aria-hidden="true"
+      class="pointer-events-none fixed inset-0 overflow-hidden"
+    >
+      <div
+        class="absolute top-[-10%] left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-yellow-400/8 blur-[120px]"
+      >
+      </div>
+      <div
+        class="absolute bottom-[10%] left-[-5%] h-[400px] w-[500px] rounded-full bg-red-600/6 blur-[100px]"
+      >
+      </div>
+      <div
+        class="absolute top-[40%] right-[-5%] h-[350px] w-[400px] rounded-full bg-yellow-400/5 blur-[100px]"
+      >
+      </div>
+    </div>
+    <div class="relative mx-auto max-w-6xl px-8">
       <!-- Header -->
-      <div class="menu-header mb-20 text-center opacity-0">
+      <div class="menu-header mb-20 text-center">
         <span
           class="text-sm font-semibold tracking-[0.4em] text-yellow-400 uppercase"
           >The Full Selection</span
@@ -26,8 +44,8 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
       </div>
 
       <!-- Signature Burgers -->
-      <section class="menu-section mb-32 opacity-0">
-        <div class="mb-12 flex items-center gap-6">
+      <section class="signature-section mb-32">
+        <div class="signature-section-title mb-12 flex items-center gap-6">
           <h2 class="text-3xl font-black tracking-wider text-white uppercase">
             Signature Burgers
           </h2>
@@ -37,7 +55,7 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
         <div class="burger-card-grid grid gap-10 md:grid-cols-2">
           {
             signatureBurgers.map((b) => (
-              <div class="burger-card group relative flex overflow-hidden rounded-3xl border border-white/5 bg-white/3 opacity-0 transition-all hover:border-yellow-400/30 hover:bg-white/5">
+              <div class="burger-card group relative flex overflow-hidden rounded-3xl border border-white/5 bg-white/3 transition-all hover:border-yellow-400/30 hover:bg-white/5">
                 <div class="w-1/3 overflow-hidden">
                   <img
                     src={b.image}
@@ -72,7 +90,7 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
         </div>
       </section>
 
-      <div class="menu-section grid gap-20 opacity-0 md:grid-cols-2">
+      <div class="menu-section grid gap-20 md:grid-cols-2">
         <!-- Sides -->
         <section>
           <div class="mb-10 flex items-center gap-4">
@@ -131,7 +149,9 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
       </div>
 
       <!-- Combos / Special Offers -->
-      <section class="mt-32 rounded-[3rem] bg-yellow-400 p-12 md:p-20">
+      <section
+        class="combo-section mt-32 rounded-[3rem] bg-yellow-400 p-12 md:p-20"
+      >
         <div class="mb-12 text-center md:text-left">
           <h2 class="text-4xl font-black text-black uppercase md:text-6xl">
             Value Combos
@@ -177,59 +197,75 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
     // Kill any existing ScrollTriggers from previous page visits
     ScrollTrigger.getAll().forEach((t) => t.kill());
 
-    // Header Animation
-    gsap.fromTo(
-      ".menu-header",
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: "expo.out", delay: 0.1 },
+    // Clear ALL leftover GSAP inline styles from a previous visit.
+    // This guarantees elements start at their natural CSS state (fully visible)
+    gsap.set(
+      ".menu-header, .signature-section-title, .burger-card, .menu-section, .combo-section",
+      { clearProps: "all" },
     );
 
-    // Section Headers Animation
-    gsap.utils.toArray<HTMLElement>(".menu-section").forEach((section) => {
-      gsap.fromTo(
-        section,
-        { y: 30, opacity: 0 },
+    // ── Single entrance timeline for everything above the fold ──
+    // No ScrollTrigger = no risk of elements getting stuck invisible.
+    const tl = gsap.timeline({ delay: 0.1 });
+
+    tl.fromTo(
+      ".menu-header",
+      { y: 20, autoAlpha: 0 },
+      { y: 0, autoAlpha: 1, duration: 0.8, ease: "expo.out" },
+    )
+      .fromTo(
+        ".signature-section-title",
+        { y: 20, autoAlpha: 0 },
+        { y: 0, autoAlpha: 1, duration: 0.8, ease: "expo.out" },
+        "-=0.6",
+      )
+      .fromTo(
+        ".burger-card",
+        { y: 30, autoAlpha: 0 },
         {
-          scrollTrigger: {
-            trigger: section,
-            start: "top 90%",
-          },
           y: 0,
-          opacity: 1,
-          duration: 0.8,
+          autoAlpha: 1,
+          duration: 1,
+          stagger: 0.1,
           ease: "expo.out",
         },
+        "-=0.6",
       );
-    });
 
-    // Burger Cards Stagger
-    gsap.fromTo(
-      ".burger-card",
-      { y: 30, opacity: 0 },
-      {
-        scrollTrigger: {
-          trigger: ".burger-card-grid",
-          start: "top 85%",
-        },
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.08,
-        ease: "expo.out",
-        delay: 0.1,
-      },
-    );
+    // ── Sections below the fold use ScrollTrigger ──
+    gsap.utils
+      .toArray<HTMLElement>(".menu-section, .combo-section")
+      .forEach((section) => {
+        gsap.from(section, {
+          scrollTrigger: {
+            trigger: section,
+            start: "top 95%",
+            toggleActions: "play none none none",
+          },
+          y: 30,
+          opacity: 0,
+          duration: 1,
+          ease: "expo.out",
+          immediateRender: false,
+        });
+      });
+
+    // Recalculate trigger positions for the new DOM
+    ScrollTrigger.refresh();
   }
 
   document.addEventListener("astro:page-load", () => {
-    // Wait for loader on first visit, run immediately on subsequent navigations
     const win = window as Window & { __loaderDone?: boolean };
-    if (win.__loaderDone) {
-      initAnimations();
-    } else {
-      document.addEventListener("loader:complete", () => initAnimations(), {
-        once: true,
-      });
-    }
+
+    // Small delay so the browser finishes layout after a View Transition swap
+    setTimeout(() => {
+      if (win.__loaderDone) {
+        initAnimations();
+      } else {
+        document.addEventListener("loader:complete", () => initAnimations(), {
+          once: true,
+        });
+      }
+    }, 60);
   });
 </script>

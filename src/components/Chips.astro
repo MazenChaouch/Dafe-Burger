@@ -1,13 +1,8 @@
 ---
 import { Image } from "astro:assets";
-import chips0 from "../assets/chips/chips_0.png";
-import chips1 from "../assets/chips/chips_1.png";
-import chips2 from "../assets/chips/chips_2.png";
-import chips3 from "../assets/chips/chips_3.png";
-import chips4 from "../assets/chips/chips_4.png";
-import chips5 from "../assets/chips/chips_5.png";
-import chips6 from "../assets/chips/chips_6.png";
-import chips7 from "../assets/chips/chips_7.png";
+import { CHIPS_DATA } from "../data/chipsData";
+
+const chips = CHIPS_DATA;
 
 /**
  * Single source of truth for each chip:
@@ -29,89 +24,6 @@ interface ChipData {
   /** Vertical offset (vw) when closed */
   closedY: number;
 }
-
-const chips: ChipData[] = [
-  {
-    src: chips0,
-    alt: "Flying potato chip",
-    blur: true,
-    size: 6,
-    openX: -26,
-    openY: 8,
-    closedX: -18,
-    closedY: 7,
-  },
-  {
-    src: chips1,
-    alt: "Flying potato chip",
-    blur: false,
-    size: 5,
-    openX: -23,
-    openY: -2,
-    closedX: -18,
-    closedY: -1,
-  },
-  {
-    src: chips2,
-    alt: "Flying potato chip",
-    blur: true,
-    size: 4,
-    openX: -20,
-    openY: -12,
-    closedX: -15,
-    closedY: -11.7,
-  },
-  {
-    src: chips3,
-    alt: "Flying potato chip",
-    blur: false,
-    size: 6,
-    openX: -6,
-    openY: -20.3,
-    closedX: -4,
-    closedY: -16,
-  },
-  {
-    src: chips4,
-    alt: "Flying potato chip",
-    blur: false,
-    size: 5.5,
-    openX: 5,
-    openY: -19,
-    closedX: 8,
-    closedY: -14.6,
-  },
-  {
-    src: chips5,
-    alt: "Flying potato chip",
-    blur: false,
-    size: 4,
-    openX: 18,
-    openY: -14.1,
-    closedX: 17,
-    closedY: -9,
-  },
-  {
-    src: chips6,
-    alt: "Flying potato chip",
-    blur: true,
-    size: 5,
-    openX: 20,
-    openY: -4,
-    closedX: 18,
-    closedY: -3,
-  },
-  {
-    src: chips7,
-    alt: "Flying potato chip",
-    blur: false,
-    size: 5.5,
-    openX: 25,
-    openY: 10,
-    closedX: 15,
-    closedY: 8,
-  },
-];
 ---
 
 <div class="chips-container flex items-center justify-center">
@@ -186,10 +98,10 @@ const chips: ChipData[] = [
 
               entranceTl.fromTo(
                 entranceEls,
-                { y: -window.innerHeight, opacity: 0 },
+                { y: -window.innerHeight, autoAlpha: 0 },
                 {
                   y: 0,
-                  opacity: 1,
+                  autoAlpha: 1,
                   duration: 1.5,
                   ease: "power3.out",
                   stagger: { each: 0.05, from: "random" },

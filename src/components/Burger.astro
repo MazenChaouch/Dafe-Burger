@@ -1,95 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import topBun from "../assets/burger/top-bun.png";
-import lettuce from "../assets/burger/letuce.png";
-import cheese from "../assets/burger/cheese.png";
-import tomato from "../assets/burger/tomato.png";
-import onions from "../assets/burger/onions.png";
-import meat from "../assets/burger/meat.png";
-import bottomBun from "../assets/burger/bottom-bun.png";
-
-/**
- * Each entry combines the image asset with its animation targets
- * and ingredient label, keeping all layer data in one place.
- */
-interface BurgerLayer {
-  src: ImageMetadata;
-  alt: string;
-  label: string;
-  cal: string;
-  /** Y offset (vw) when the burger is in the open/exploded state */
-  openY: number;
-  /** Y offset (vw) when the burger is in the closed/stacked state */
-  closedY: number;
-  /** CSS z-index for correct visual stacking */
-  z: number;
-}
-
-const layers: BurgerLayer[] = [
-  {
-    src: topBun,
-    alt: "Top bun",
-    label: "Top Bun",
-    cal: "120 kcal",
-    openY: -4,
-    closedY: 5.6,
-    z: 50,
-  },
-  {
-    src: tomato,
-    alt: "Tomato",
-    label: "Tomato",
-    cal: "5 kcal",
-    openY: -3,
-    closedY: 4.0,
-    z: 40,
-  },
-  {
-    src: onions,
-    alt: "Onions",
-    label: "Onions",
-    cal: "10 kcal",
-    openY: -2,
-    closedY: 3.0,
-    z: 30,
-  },
-  {
-    src: cheese,
-    alt: "Cheese",
-    label: "Cheese",
-    cal: "80 kcal",
-    openY: -1,
-    closedY: 2.0,
-    z: 20,
-  },
-  {
-    src: meat,
-    alt: "Beef patty",
-    label: "Beef Patty",
-    cal: "250 kcal",
-    openY: 0,
-    closedY: 0.0,
-    z: 10,
-  },
-  {
-    src: lettuce,
-    alt: "Lettuce",
-    label: "Lettuce",
-    cal: "3 kcal",
-    openY: 1,
-    closedY: -1.0,
-    z: 0,
-  },
-  {
-    src: bottomBun,
-    alt: "Bottom bun",
-    label: "Bottom Bun",
-    cal: "120 kcal",
-    openY: 2,
-    closedY: -2.0,
-    z: 10,
-  },
-];
+import { BURGER_LAYERS } from "../data/burgerLayers";
+const layers = BURGER_LAYERS;
 ---
 
 <div
@@ -110,7 +22,7 @@ const layers: BurgerLayer[] = [
               class="burger-item w-[14vw] object-contain"
             />
             <div
-              class={`layer-label pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center opacity-0 ${
+              class={`layer-label pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center ${
                 isLeft
                   ? "right-[calc(100%-1.25vw)] flex-row-reverse"
                   : "left-[calc(100%-1.25vw)] flex-row"
@@ -145,7 +57,7 @@ const layers: BurgerLayer[] = [
     conflicting with GSAP's width animation.
   -->
     <div
-      class="buy-now-btn pointer-events-none mx-auto mt-[3vw] overflow-hidden rounded-full bg-yellow-400 py-[0.6vw] text-center text-[1.1vw] font-bold tracking-wider text-black uppercase opacity-0"
+      class="buy-now-btn pointer-events-none mx-auto mt-[3vw] overflow-hidden rounded-full bg-yellow-400 py-[0.6vw] text-center text-[1.1vw] font-bold tracking-wider text-black uppercase"
       style="width: 0;"
     >
       <span class="whitespace-nowrap">Buy Now</span>
@@ -197,7 +109,7 @@ const layers: BurgerLayer[] = [
         el.querySelector<HTMLElement>(".label-cal")!.textContent =
           layers[i].cal;
         // gsap.set is zero-duration and doesn't create a conflicting tween
-        gsap.set(el, { opacity: 0, x: i % 2 === 0 ? -30 : 30 });
+        gsap.set(el, { autoAlpha: 0, x: i % 2 === 0 ? -30 : 30 });
       });
 
       // ── Click → toggle shared state ──
@@ -226,10 +138,10 @@ const layers: BurgerLayer[] = [
               // Re-run the drop-in animation
               entranceTl.fromTo(
                 itemEls,
-                { y: -window.innerHeight, opacity: 0 },
+                { y: -window.innerHeight, autoAlpha: 0 },
                 {
                   y: 0,
-                  opacity: 1,
+                  autoAlpha: 1,
                   duration: 1.8,
                   ease: "power3.out",
                   stagger: { each: 0.07, from: "end" },
@@ -245,9 +157,9 @@ const layers: BurgerLayer[] = [
                       labelElsRe.forEach((el, i) => {
                         gsap.fromTo(
                           el,
-                          { opacity: 0, y: -window.innerHeight },
+                          { autoAlpha: 0, y: -window.innerHeight },
                           {
-                            opacity: 1,
+                            autoAlpha: 1,
                             y: 0,
                             duration: 1.8,
                             ease: "power3.out",
@@ -306,9 +218,9 @@ const layers: BurgerLayer[] = [
           if (isOpen) {
             gsap.fromTo(
               el,
-              { opacity: 0, x: dir, scale: 0.8 },
+              { autoAlpha: 0, x: dir, scale: 0.8 },
               {
-                opacity: 1,
+                autoAlpha: 1,
                 x: 0,
                 scale: 1,
                 duration: 0.6,
@@ -319,7 +231,7 @@ const layers: BurgerLayer[] = [
             );
           } else {
             gsap.to(el, {
-              opacity: 0,
+              autoAlpha: 0,
               x: dir,
               scale: 0.8,
               duration: 0.4,
@@ -355,10 +267,10 @@ const layers: BurgerLayer[] = [
           if (isOpen) {
             gsap.fromTo(
               buyNowBtn,
-              { y: "-4vw", opacity: 0, width: 0 },
+              { y: "-4vw", autoAlpha: 0, width: 0 },
               {
                 y: "2.5vw",
-                opacity: 1,
+                autoAlpha: 1,
                 width: "14vw",
                 duration: 0.4,
                 ease: "power2.out",
@@ -369,7 +281,7 @@ const layers: BurgerLayer[] = [
           } else {
             gsap.to(buyNowBtn, {
               y: 0,
-              opacity: 0,
+              autoAlpha: 0,
               width: 0,
               duration: 0.2,
               ease: "power2.in",

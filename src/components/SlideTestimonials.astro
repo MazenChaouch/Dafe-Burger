@@ -1,16 +1,11 @@
 ---
-// Slide 6 – Testimonials
-const reviews = [
-  { quote: "The harissa burger changed my life 🔥", name: "Karim B.", stars: 5, initials: "KB", color: "bg-red-500" },
-  { quote: "Freshest patties in the city, hands down.", name: "Amina M.", stars: 5, initials: "AM", color: "bg-emerald-500" },
-  { quote: "Fries are dangerously good. Went back 3 times.", name: "Mehdi T.", stars: 5, initials: "MT", color: "bg-yellow-500" },
-  { quote: "Perfect late-night spot. Open late, worth it!", name: "Sarah K.", stars: 5, initials: "SK", color: "bg-purple-500" },
-];
+import { TESTIMONIALS, TESTIMONIAL_SUMMARY } from "../data/testimonials";
+const reviews = TESTIMONIALS;
 ---
 
 <section
   id="slide-6"
-  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-[#181818]"
+  class="snap-section relative flex h-screen w-full shrink-0 items-center justify-center overflow-hidden bg-[#181818]"
 >
   <!-- Background accent -->
   <div aria-hidden="true" class="pointer-events-none absolute top-1/2 left-1/2 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full bg-yellow-400/3 blur-[120px]"></div>
@@ -33,7 +28,7 @@ const reviews = [
         >
           <!-- Stars -->
           <div class="flex gap-1 text-yellow-400">
-            {"★★★★★".split("").map(() => <span class="text-base">★</span>)}
+            {Array.from({ length: r.stars }).map(() => <span class="text-base">★</span>)}
           </div>
 
           <!-- Quote -->
@@ -54,14 +49,15 @@ const reviews = [
 
     <!-- Rating summary -->
     <div class="flex items-center gap-4 rounded-full border border-white/10 bg-white/5 px-8 py-3 backdrop-blur-sm">
-      <span class="text-3xl font-black text-yellow-400">5.0</span>
+      <span class="text-3xl font-black text-yellow-400">{TESTIMONIAL_SUMMARY.rating}</span>
       <div class="h-8 w-px bg-white/10"></div>
       <div class="flex flex-col">
         <span class="text-sm font-bold text-white">★★★★★</span>
-        <span class="text-xs text-white/40">Based on 200+ reviews</span>
+        <span class="text-xs text-white/40">Based on {TESTIMONIAL_SUMMARY.count}</span>
       </div>
       <div class="h-8 w-px bg-white/10"></div>
-      <span class="text-sm text-white/60">Google · TripAdvisor</span>
+      <span class="text-sm text-white/60">{TESTIMONIAL_SUMMARY.platforms.join(" · ")}</span>
     </div>
   </div>
 </section>
+
