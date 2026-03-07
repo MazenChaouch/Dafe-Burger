@@ -13,7 +13,7 @@ import SiteFooter from "../components/SiteFooter.astro";
     <!-- Background Text -->
     <p
       aria-hidden="true"
-      class="pointer-events-none absolute top-1/2 left-[5%] -translate-y-1/2 text-[40dvh] leading-none font-bold text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.1)] [writing-mode:vertical-rl]"
+      class="bg-text pointer-events-none absolute top-1/2 left-[5%] -translate-y-1/2 text-[40dvh] leading-none font-bold text-transparent opacity-0 [-webkit-text-stroke:1px_rgba(255,255,255,0.1)] [writing-mode:vertical-rl]"
     >
       TUNIS
     </p>
@@ -22,12 +22,12 @@ import SiteFooter from "../components/SiteFooter.astro";
       <!-- Hero Section -->
       <div class="mb-32 flex flex-col items-center text-center">
         <h1
-          class="text-8xl leading-none font-black tracking-tighter text-white uppercase md:text-[15rem]"
+          class="hero-title text-8xl leading-none font-black tracking-tighter text-white uppercase opacity-0 md:text-[15rem]"
         >
           YAMMY
         </h1>
         <p
-          class="mt-4 text-3xl font-bold tracking-[0.3em] text-yellow-400 uppercase"
+          class="hero-subtitle mt-4 text-3xl font-bold tracking-[0.3em] text-yellow-400 uppercase opacity-0"
         >
           The Vibe Check
         </p>
@@ -35,7 +35,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 
       <!-- Story Grid -->
       <div class="grid items-center gap-20 md:grid-cols-2">
-        <div class="flex flex-col gap-8">
+        <div class="story-content flex flex-col gap-8 opacity-0">
           <h2 class="text-5xl leading-tight font-black text-white">
             Handcrafted <br />
             <span class="text-yellow-400">with Passion</span>
@@ -70,7 +70,7 @@ import SiteFooter from "../components/SiteFooter.astro";
           </div>
         </div>
 
-        <div class="relative">
+        <div class="story-image relative opacity-0">
           <div
             class="group flex aspect-square items-center justify-center overflow-hidden rounded-4xl border border-white/10 bg-emerald-700/50"
           >
@@ -94,7 +94,7 @@ import SiteFooter from "../components/SiteFooter.astro";
       <!-- Values -->
       <div class="mt-40 grid gap-12 md:grid-cols-3">
         <div
-          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
         >
           <span class="text-4xl">🔥</span>
           <h3 class="text-2xl font-black text-white uppercase">The Heat</h3>
@@ -104,7 +104,7 @@ import SiteFooter from "../components/SiteFooter.astro";
           </p>
         </div>
         <div
-          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
         >
           <span class="text-4xl">🌿</span>
           <h3 class="text-2xl font-black text-white uppercase">The Fresh</h3>
@@ -114,7 +114,7 @@ import SiteFooter from "../components/SiteFooter.astro";
           </p>
         </div>
         <div
-          class="flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 backdrop-blur-sm"
+          class="value-card flex flex-col gap-4 rounded-4xl border border-white/5 bg-white/5 p-8 opacity-0 backdrop-blur-sm"
         >
           <span class="text-4xl">🤝</span>
           <h3 class="text-2xl font-black text-white uppercase">The Local</h3>
@@ -129,3 +129,94 @@ import SiteFooter from "../components/SiteFooter.astro";
 
   <SiteFooter />
 </Layout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initAnimations() {
+    // Kill any existing ScrollTriggers from previous page visits
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+
+    // Hero Animations
+    const tl = gsap.timeline();
+    tl.fromTo(
+      ".hero-title",
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: "expo.out", delay: 0.1 },
+    )
+      .fromTo(
+        ".hero-subtitle",
+        { y: 15, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+        "-=0.7",
+      )
+      .fromTo(
+        ".bg-text",
+        { x: -20, opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.5, ease: "expo.out" },
+        "0",
+      );
+
+    // Story Grid Animations
+    gsap.fromTo(
+      ".story-content",
+      { y: 20, opacity: 0 },
+      {
+        scrollTrigger: {
+          trigger: ".story-content",
+          start: "top 90%",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "expo.out",
+      },
+    );
+
+    gsap.fromTo(
+      ".story-image",
+      { scale: 0.98, opacity: 0 },
+      {
+        scrollTrigger: {
+          trigger: ".story-image",
+          start: "top 90%",
+        },
+        scale: 1,
+        opacity: 1,
+        duration: 0.8,
+        ease: "expo.out",
+      },
+    );
+
+    // Value Cards Animations
+    gsap.fromTo(
+      ".value-card",
+      { y: 30, opacity: 0 },
+      {
+        scrollTrigger: {
+          trigger: ".value-card",
+          start: "top 95%",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.7,
+        stagger: 0.1,
+        ease: "expo.out",
+      },
+    );
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    // Wait for loader on first visit, run immediately on subsequent navigations
+    const win = window as Window & { __loaderDone?: boolean };
+    if (win.__loaderDone) {
+      initAnimations();
+    } else {
+      document.addEventListener("loader:complete", () => initAnimations(), {
+        once: true,
+      });
+    }
+  });
+</script>

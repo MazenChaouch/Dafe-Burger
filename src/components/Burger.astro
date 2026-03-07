@@ -155,170 +155,235 @@ const layers: BurgerLayer[] = [
 
 <script>
   import gsap from "gsap";
-  import { store } from "../store";
+  import { burgerStore } from "../store";
 
-  // ── Layer animation data is now defined in the Astro frontmatter.
-  // We read it from data-attributes or replicate just the numeric values here.
-  // Since Astro renders server-side, we keep the JS array in sync with the
-  // frontmatter definition — a future improvement would pass it via data-attrs.
-  const layers = [
-    { openY: -4, closedY: 5.6, z: 50, label: "Top Bun", cal: "120 kcal" },
-    { openY: -3, closedY: 4.0, z: 40, label: "Tomato", cal: "5 kcal" },
-    { openY: -2, closedY: 3.0, z: 30, label: "Onions", cal: "10 kcal" },
-    { openY: -1, closedY: 2.0, z: 20, label: "Cheese", cal: "80 kcal" },
-    { openY: 0, closedY: 0.0, z: 10, label: "Beef Patty", cal: "250 kcal" },
-    { openY: 1, closedY: -1.0, z: 0, label: "Lettuce", cal: "3 kcal" },
-    { openY: 2, closedY: -2.0, z: 10, label: "Bottom Bun", cal: "120 kcal" },
-  ];
+  document.addEventListener("astro:page-load", () => {
+    // ── Layer animation data is now defined in the Astro frontmatter.
+    // We read it from data-attributes or replicate just the numeric values here.
+    // Since Astro renders server-side, we keep the JS array in sync with the
+    // frontmatter definition — a future improvement would pass it via data-attrs.
+    const layers = [
+      { openY: -4, closedY: 5.6, z: 50, label: "Top Bun", cal: "120 kcal" },
+      { openY: -3, closedY: 4.0, z: 40, label: "Tomato", cal: "5 kcal" },
+      { openY: -2, closedY: 3.0, z: 30, label: "Onions", cal: "10 kcal" },
+      { openY: -1, closedY: 2.0, z: 20, label: "Cheese", cal: "80 kcal" },
+      { openY: 0, closedY: 0.0, z: 10, label: "Beef Patty", cal: "250 kcal" },
+      { openY: 1, closedY: -1.0, z: 0, label: "Lettuce", cal: "3 kcal" },
+      { openY: 2, closedY: -2.0, z: 10, label: "Bottom Bun", cal: "120 kcal" },
+    ];
 
-  // ── Init & Animation per container ──
-  const containers =
-    document.querySelectorAll<HTMLElement>(".burger-container");
+    // ── Init & Animation per container ──
+    const containers =
+      document.querySelectorAll<HTMLElement>(".burger-container");
 
-  containers.forEach((container) => {
-    // ── DOM refs scoped to this container instance ──
-    const layerEls = container.querySelectorAll<HTMLElement>(".burger-layer");
-    const itemEls = container.querySelectorAll<HTMLElement>(".burger-item");
-    const labelEls = container.querySelectorAll<HTMLElement>(".layer-label");
-    const buyNowBtn = container.querySelector<HTMLElement>(".buy-now-btn");
+    containers.forEach((container) => {
+      // ── DOM refs scoped to this container instance ──
+      const layerEls = container.querySelectorAll<HTMLElement>(".burger-layer");
+      const itemEls = container.querySelectorAll<HTMLElement>(".burger-item");
+      const labelEls = container.querySelectorAll<HTMLElement>(".layer-label");
+      const buyNowBtn = container.querySelector<HTMLElement>(".buy-now-btn");
 
-    // ── Init: set closed positions directly via CSS (no GSAP) ──
-    // This must run before the entrance animation so gsap.from() can animate
-    // in from off-screen without a concurrent tween overwriting it.
-    layerEls.forEach((el, i) => {
-      el.style.zIndex = String(layers[i].z);
-      el.style.transform = `translateY(${layers[i].closedY}vw)`;
-    });
+      // ── Init: set closed positions directly via CSS (no GSAP) ──
+      // This must run before the entrance animation so gsap.from() can animate
+      // in from off-screen without a concurrent tween overwriting it.
+      layerEls.forEach((el, i) => {
+        el.style.zIndex = String(layers[i].z);
+        el.style.transform = `translateY(${layers[i].closedY}vw)`;
+      });
 
-    labelEls.forEach((el, i) => {
-      el.querySelector<HTMLElement>(".label-name")!.textContent =
-        layers[i].label;
-      el.querySelector<HTMLElement>(".label-cal")!.textContent = layers[i].cal;
-      // gsap.set is zero-duration and doesn't create a conflicting tween
-      gsap.set(el, { opacity: 0, x: i % 2 === 0 ? -30 : 30 });
-    });
+      labelEls.forEach((el, i) => {
+        el.querySelector<HTMLElement>(".label-name")!.textContent =
+          layers[i].label;
+        el.querySelector<HTMLElement>(".label-cal")!.textContent =
+          layers[i].cal;
+        // gsap.set is zero-duration and doesn't create a conflicting tween
+        gsap.set(el, { opacity: 0, x: i % 2 === 0 ? -30 : 30 });
+      });
 
-    // ── Click → toggle shared state ──
-    container.addEventListener("click", () => store.toggle());
+      // ── Click → toggle shared state ──
+      container.addEventListener("click", (e) => {
+        e.stopPropagation();
+        burgerStore.toggle();
+      });
 
-    let bounceTween: gsap.core.Tween | null = null;
-    let entranceTl: gsap.core.Timeline | null = null;
+      let bounceTween: gsap.core.Tween | null = null;
+      let entranceTl: gsap.core.Timeline | null = null;
 
-    // ── Entrance animation on scroll ──
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Kill existing animations if any
-            if (bounceTween) bounceTween.kill();
-            if (entranceTl) entranceTl.kill();
+      // ── Entrance animation on scroll ──
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Kill existing animations if any
+              if (bounceTween) bounceTween.kill();
+              if (entranceTl) entranceTl.kill();
 
-            // Reset container position before new bounce
-            gsap.set(container, { y: 0 });
+              // Reset container position before new bounce
+              gsap.set(container, { y: 0 });
 
-            entranceTl = gsap.timeline();
+              entranceTl = gsap.timeline();
 
-            // Re-run the drop-in animation
-            entranceTl.fromTo(
-              itemEls,
-              { y: -window.innerHeight, opacity: 0 },
+              // Re-run the drop-in animation
+              entranceTl.fromTo(
+                itemEls,
+                { y: -window.innerHeight, opacity: 0 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  duration: 1.8,
+                  ease: "power3.out",
+                  stagger: { each: 0.07, from: "end" },
+                  onStart: () => {
+                    // If open during page-load (unlikely, but safe), setup labels too
+                    if (burgerStore.isOpen) {
+                      const layerElsRe =
+                        container.querySelectorAll<HTMLElement>(
+                          ".burger-layer",
+                        );
+                      const labelElsRe =
+                        container.querySelectorAll<HTMLElement>(".layer-label");
+                      labelElsRe.forEach((el, i) => {
+                        gsap.fromTo(
+                          el,
+                          { opacity: 0, y: -window.innerHeight },
+                          {
+                            opacity: 1,
+                            y: 0,
+                            duration: 1.8,
+                            ease: "power3.out",
+                            delay: (layerElsRe.length - i - 1) * 0.07,
+                          },
+                        );
+                      });
+                    }
+                  },
+                },
+              );
+
+              // Start idle bounce after entrance completes
+              bounceTween = gsap.to(container, {
+                y: "-2vw",
+                duration: 1,
+                delay: 1.8 + layerEls.length * 0.07 + 1, // timeline duration + 1s rest
+                ease: "sine.inOut",
+                repeat: -1,
+                yoyo: true,
+              });
+            }
+          });
+        },
+        { threshold: 0.1 }, // Trigger when 10% is visible
+      );
+
+      const startObservation = () => {
+        observer.observe(container);
+      };
+
+      const win = window as any;
+      if (win.__loaderDone) {
+        startObservation();
+      } else {
+        document.addEventListener("loader:complete", startObservation, {
+          once: true,
+        });
+      }
+
+      // ── React to open/close (store fires immediately with current state) ──
+      const unsubscribe = burgerStore.subscribe((isOpen) => {
+        // 1. Animate layer positions
+        layerEls.forEach((el, i) => {
+          gsap.to(el, {
+            y: `${isOpen ? layers[i].openY : layers[i].closedY}vw`,
+            duration: 0.6,
+            ease: "back.out(1.7)",
+            overwrite: true,
+          });
+        });
+
+        // 2. Animate labels in / out
+        labelEls.forEach((el, i) => {
+          const dir = i % 2 === 0 ? -30 : 30;
+          if (isOpen) {
+            gsap.fromTo(
+              el,
+              { opacity: 0, x: dir, scale: 0.8 },
               {
-                y: 0,
                 opacity: 1,
-                duration: 1.8,
-                ease: "power3.out",
-                stagger: { each: 0.07, from: "end" },
+                x: 0,
+                scale: 1,
+                duration: 0.6,
+                delay: 0.3 + i * 0.08,
+                ease: "back.out(1.7)",
+                overwrite: true,
               },
             );
+          } else {
+            gsap.to(el, {
+              opacity: 0,
+              x: dir,
+              scale: 0.8,
+              duration: 0.4,
+              ease: "power2.in",
+              overwrite: true,
+            });
+          }
+        });
 
-            // Start idle bounce after entrance completes
+        // 3. Handle idle bounce (killing and recreating is safer than pause/resume due to overwrites)
+        if (isOpen) {
+          if (bounceTween) bounceTween.kill();
+          gsap.to(container, {
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        } else {
+          if (bounceTween) {
             bounceTween = gsap.to(container, {
               y: "-2vw",
               duration: 1,
-              delay: 1.8 + layerEls.length * 0.07 + 1, // timeline duration + 1s rest
               ease: "sine.inOut",
               repeat: -1,
               yoyo: true,
             });
           }
-        });
-      },
-      { threshold: 0.1 }, // Trigger when 10% is visible
-    );
-
-    observer.observe(container);
-
-    // ── React to open/close (store fires immediately with current state) ──
-    const unsubscribe = store.subscribe((isOpen) => {
-      // 1. Animate layer positions
-      layerEls.forEach((el, i) => {
-        gsap.to(el, {
-          y: `${isOpen ? layers[i].openY : layers[i].closedY}vw`,
-          duration: 0.6,
-          ease: "back.out(1.7)",
-          overwrite: true,
-        });
-      });
-
-      // 2. Animate labels in / out
-      labelEls.forEach((el, i) => {
-        const dir = i % 2 === 0 ? -30 : 30;
-        gsap.to(el, {
-          opacity: isOpen ? 1 : 0,
-          x: isOpen ? 0 : dir,
-          duration: isOpen ? 0.5 : 0.3,
-          delay: isOpen ? 0.2 + i * 0.06 : 0,
-          ease: isOpen ? "power2.out" : "power2.in",
-          overwrite: true,
-        });
-      });
-
-      // 3. Pause / resume idle bounce
-      if (isOpen) {
-        bounceTween?.pause();
-        gsap.to(container, {
-          y: 0,
-          duration: 0.4,
-          ease: "power2.out",
-          overwrite: true,
-        });
-      } else {
-        bounceTween?.resume();
-      }
-
-      // 4. Show / hide Buy Now button
-      if (buyNowBtn) {
-        if (isOpen) {
-          gsap.fromTo(
-            buyNowBtn,
-            { y: "-4vw", opacity: 0, width: 0 },
-            {
-              y: "2.5vw",
-              opacity: 1,
-              width: "14vw",
-              duration: 0.4,
-              ease: "power2.out",
-              pointerEvents: "auto",
-              overwrite: true,
-            },
-          );
-        } else {
-          gsap.to(buyNowBtn, {
-            y: 0,
-            opacity: 0,
-            width: 0,
-            duration: 0.2,
-            ease: "power2.in",
-            pointerEvents: "none",
-            overwrite: true,
-          });
         }
-      }
-    });
 
-    // Clean up on page unload (important for View Transitions)
-    document.addEventListener("astro:before-swap", unsubscribe, {
-      once: true,
+        // 4. Show / hide Buy Now button
+        if (buyNowBtn) {
+          if (isOpen) {
+            gsap.fromTo(
+              buyNowBtn,
+              { y: "-4vw", opacity: 0, width: 0 },
+              {
+                y: "2.5vw",
+                opacity: 1,
+                width: "14vw",
+                duration: 0.4,
+                ease: "power2.out",
+                pointerEvents: "auto",
+                overwrite: true,
+              },
+            );
+          } else {
+            gsap.to(buyNowBtn, {
+              y: 0,
+              opacity: 0,
+              width: 0,
+              duration: 0.2,
+              ease: "power2.in",
+              pointerEvents: "none",
+              overwrite: true,
+            });
+          }
+        }
+      });
+
+      // Clean up on page unload (important for View Transitions)
+      document.addEventListener("astro:before-swap", unsubscribe, {
+        once: true,
+      });
     });
   });
 </script>

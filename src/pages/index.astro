@@ -40,7 +40,7 @@ import SiteFooter from "../components/SiteFooter.astro";
       <div class="w-fit">
         <!-- Single <h1> per page -->
         <h1
-          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white"
+          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white opacity-0"
         >
           The Best Burger in Town
         </h1>
@@ -55,7 +55,7 @@ import SiteFooter from "../components/SiteFooter.astro";
         </div>
         <!-- Scroll indicator -->
         <div
-          class="absolute top-[95%] left-1/2 -translate-x-1/2"
+          class="absolute bottom-[5%] left-1/2 -translate-x-1/2"
           aria-hidden="true"
         >
           <div class="h-8 w-5 rounded-2xl border-[3px] border-white">
@@ -89,7 +89,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 
       <div class="w-fit">
         <h2
-          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white"
+          class="main-text absolute top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-[12vh] font-bold text-nowrap text-white opacity-0"
         >
           Fresh Ingredients Always
         </h2>
@@ -113,122 +113,137 @@ import SiteFooter from "../components/SiteFooter.astro";
 
 <script>
   import gsap from "gsap";
-  import { store } from "../store";
+  import { burgerStore } from "../store";
 
-  const mainTexts = document.querySelectorAll<HTMLElement>(".main-text");
-  const toggleBtns = document.querySelectorAll<HTMLElement>(".toggle-btn");
+  document.addEventListener("astro:page-load", () => {
+    // ── DOM references ──
+    const mainTexts = document.querySelectorAll<HTMLElement>(".main-text");
+    const toggleBtns = document.querySelectorAll<HTMLElement>(".toggle-btn");
+    const sections = document.querySelectorAll<HTMLElement>(".snap-section");
+    const footer = document.getElementById("site-footer");
+    const navDots = document.querySelectorAll<HTMLAnchorElement>(".nav-dot");
 
-  const sections = document.querySelectorAll<HTMLElement>(".snap-section");
-  const footer = document.querySelector<HTMLElement>("footer");
-  const navDots = document.querySelectorAll<HTMLAnchorElement>(".nav-dot");
-
-  // ── Entrance on scroll & Navigation Update ──
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const target = entry.target as HTMLElement;
-          const sectionId = target.getAttribute("id");
-
-          // 1. Update navigation dots & URL hash (only for sections with IDs)
-          if (sectionId) {
-            // Update URL hash without jumping/adding to history stack
-            history.replaceState(null, "", `#${sectionId}`);
-
-            navDots.forEach((dot) => {
-              const isMatch = dot.getAttribute("href") === `#${sectionId}`;
-              if (isMatch) {
-                dot.classList.add("bg-yellow-400", "scale-125");
-                dot.classList.remove("bg-transparent", "scale-100");
-              } else {
-                dot.classList.remove("bg-yellow-400", "scale-125");
-                dot.classList.add("bg-transparent", "scale-100");
-              }
-            });
-          }
-
-          // 2. Play main text entrance
-          const mainText = target.querySelector(".main-text");
-          if (mainText) {
-            gsap.fromTo(
-              mainText,
-              { y: -100, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 1.2,
-                ease: "power4.out",
-                overwrite: true,
-              },
-            );
-          }
-
-          // 3. Staggered cards (Slide 4 & 6)
-          const cards = target.querySelectorAll(".burger-card, .review-card");
-          if (cards.length > 0) {
-            gsap.fromTo(
-              cards,
-              { y: 60, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 0.8,
-                stagger: 0.15,
-                ease: "power2.out",
-                delay: 0.3,
-                overwrite: true,
-              },
-            );
-          }
-
-          // 4. Footer "Height Growth" animation
-          if (target.tagName === "FOOTER") {
-            gsap.fromTo(
-              target,
-              { paddingTop: "4rem", paddingBottom: "4rem" },
-              {
-                paddingTop: "10rem",
-                paddingBottom: "14rem",
-                duration: 1.5,
-                ease: "expo.out",
-                overwrite: true,
-              },
-            );
-          }
+    /**
+     * Updates the dot navigator to highlight the active section.
+     */
+    function setActiveDot(sectionId: string) {
+      history.replaceState(null, "", `#${sectionId}`);
+      navDots.forEach((dot) => {
+        const isMatch = dot.getAttribute("href") === `#${sectionId}`;
+        if (isMatch) {
+          dot.classList.add("bg-yellow-400", "scale-125");
+          dot.classList.remove("bg-transparent", "scale-100");
+        } else {
+          dot.classList.remove("bg-yellow-400", "scale-125");
+          dot.classList.add("bg-transparent", "scale-100");
         }
       });
-    },
-    { threshold: 0.2 }, // Lower threshold to trigger animations earlier
-  );
+    }
 
-  sections.forEach((s) => observer.observe(s));
-  if (footer) observer.observe(footer);
+    /**
+     * Starts the IntersectionObserver for scroll-based animations.
+     * Called after the loading screen finishes.
+     */
+    function initScrollAnimations() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const target = entry.target as HTMLElement;
+              const sectionId = target.getAttribute("id");
 
-  // ── React to open/close (store fires immediately with current state) ──
-  const unsubscribe = store.subscribe((isOpen) => {
-    // Slide main texts off-screen to the top
-    mainTexts.forEach((mainText) => {
-      gsap.to(mainText, {
-        y: isOpen ? -window.innerHeight : 0,
-        opacity: isOpen ? 0 : 1,
-        duration: 0.7,
-        ease: isOpen ? "sine.out" : "back.out(1)",
-        overwrite: true,
+              // Update navigation dots & URL hash
+              if (sectionId) {
+                setActiveDot(sectionId);
+              }
+
+              // Play main text entrance
+              const mainText = target.querySelector(".main-text");
+              if (mainText) {
+                gsap.fromTo(
+                  mainText,
+                  { y: -80, opacity: 0 },
+                  {
+                    y: 0,
+                    opacity: 1,
+                    duration: 1,
+                    ease: "expo.out",
+                    overwrite: true,
+                  },
+                );
+              }
+
+              // Staggered cards
+              const cards = target.querySelectorAll(
+                ".burger-card, .review-card",
+              );
+              if (cards.length > 0) {
+                gsap.fromTo(
+                  cards,
+                  { y: 20, opacity: 0 },
+                  {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.5,
+                    stagger: 0.09,
+                    ease: "expo.out",
+                    delay: 0.1,
+                    overwrite: true,
+                  },
+                );
+              }
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+
+      // Observe ALL sections including the footer
+      sections.forEach((s) => observer.observe(s));
+      if (footer) observer.observe(footer);
+    }
+
+    // ── Wait for loading screen to finish, THEN start animations ──
+    const win = window as Window & { __loaderDone?: boolean };
+
+    if (win.__loaderDone) {
+      // Loader already finished (e.g. View Transition navigation) — start immediately
+      initScrollAnimations();
+    } else {
+      // First visit — wait for loader:complete event
+      document.addEventListener(
+        "loader:complete",
+        () => {
+          initScrollAnimations();
+        },
+        { once: true },
+      );
+    }
+
+    // ── Burger store reactions (these can run immediately) ──
+    const unsubscribe = burgerStore.subscribe((isOpen: boolean) => {
+      mainTexts.forEach((mainText) => {
+        gsap.to(mainText, {
+          y: isOpen ? -window.innerHeight : 0,
+          opacity: isOpen ? 0 : 1,
+          duration: 0.7,
+          ease: isOpen ? "sine.out" : "back.out(1)",
+          overwrite: true,
+        });
+      });
+
+      toggleBtns.forEach((toggleBtn) => {
+        gsap.to(toggleBtn, {
+          opacity: isOpen ? 0 : 1,
+          y: isOpen ? 20 : 0,
+          duration: 0.3,
+          delay: isOpen ? 0 : 0.2,
+          pointerEvents: isOpen ? "none" : "auto",
+          overwrite: true,
+        });
       });
     });
 
-    // Hide / show "Click on burger" hint
-    toggleBtns.forEach((toggleBtn) => {
-      gsap.to(toggleBtn, {
-        opacity: isOpen ? 0 : 1,
-        y: isOpen ? 20 : 0,
-        duration: 0.3,
-        delay: isOpen ? 0 : 0.2,
-        pointerEvents: isOpen ? "none" : "auto",
-        overwrite: true,
-      });
-    });
+    document.addEventListener("astro:before-swap", unsubscribe, { once: true });
   });
-
-  document.addEventListener("astro:before-swap", unsubscribe, { once: true });
 </script>

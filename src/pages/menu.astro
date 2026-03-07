@@ -11,7 +11,7 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
   <main class="min-h-screen bg-[#111] pt-32 pb-20">
     <div class="mx-auto max-w-6xl px-8">
       <!-- Header -->
-      <div class="mb-20 text-center">
+      <div class="menu-header mb-20 text-center opacity-0">
         <span
           class="text-sm font-semibold tracking-[0.4em] text-yellow-400 uppercase"
           >The Full Selection</span
@@ -26,7 +26,7 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
       </div>
 
       <!-- Signature Burgers -->
-      <section class="mb-32">
+      <section class="menu-section mb-32 opacity-0">
         <div class="mb-12 flex items-center gap-6">
           <h2 class="text-3xl font-black tracking-wider text-white uppercase">
             Signature Burgers
@@ -34,10 +34,10 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
           <div class="h-px flex-1 bg-yellow-400/20"></div>
         </div>
 
-        <div class="grid gap-10 md:grid-cols-2">
+        <div class="burger-card-grid grid gap-10 md:grid-cols-2">
           {
             signatureBurgers.map((b) => (
-              <div class="group relative flex overflow-hidden rounded-3xl border border-white/5 bg-white/3 transition-all hover:border-yellow-400/30 hover:bg-white/5">
+              <div class="burger-card group relative flex overflow-hidden rounded-3xl border border-white/5 bg-white/3 opacity-0 transition-all hover:border-yellow-400/30 hover:bg-white/5">
                 <div class="w-1/3 overflow-hidden">
                   <img
                     src={b.image}
@@ -72,7 +72,7 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
         </div>
       </section>
 
-      <div class="grid gap-20 md:grid-cols-2">
+      <div class="menu-section grid gap-20 opacity-0 md:grid-cols-2">
         <!-- Sides -->
         <section>
           <div class="mb-10 flex items-center gap-4">
@@ -168,9 +168,68 @@ import { signatureBurgers, sides, drinks, combos } from "../data/menu";
   <SiteFooter />
 </Layout>
 
-<style>
-  /* Base transitions are handled by Tailwind, but custom ones for complex cards */
-  .group:hover img {
-    transform: scale(1.1);
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initAnimations() {
+    // Kill any existing ScrollTriggers from previous page visits
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+
+    // Header Animation
+    gsap.fromTo(
+      ".menu-header",
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, ease: "expo.out", delay: 0.1 },
+    );
+
+    // Section Headers Animation
+    gsap.utils.toArray<HTMLElement>(".menu-section").forEach((section) => {
+      gsap.fromTo(
+        section,
+        { y: 30, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: section,
+            start: "top 90%",
+          },
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "expo.out",
+        },
+      );
+    });
+
+    // Burger Cards Stagger
+    gsap.fromTo(
+      ".burger-card",
+      { y: 30, opacity: 0 },
+      {
+        scrollTrigger: {
+          trigger: ".burger-card-grid",
+          start: "top 85%",
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: "expo.out",
+        delay: 0.1,
+      },
+    );
   }
-</style>
+
+  document.addEventListener("astro:page-load", () => {
+    // Wait for loader on first visit, run immediately on subsequent navigations
+    const win = window as Window & { __loaderDone?: boolean };
+    if (win.__loaderDone) {
+      initAnimations();
+    } else {
+      document.addEventListener("loader:complete", () => initAnimations(), {
+        once: true,
+      });
+    }
+  });
+</script>

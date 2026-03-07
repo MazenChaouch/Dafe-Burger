@@ -1,7 +1,17 @@
 {
-  "name": "dafe-burger-shop",
+  "name": "berger-in-motion-astro-template",
+  "version": "1.0.0",
+  "description": "A premium, motion-driven restaurant template built with Astro, Tailwind CSS, and GSAP.",
+  "author": "Mazen Chaouch",
+  "license": "MIT",
+  "keywords": [
+    "astro",
+    "template",
+    "restaurant",
+    "gsap",
+    "tailwindcss"
+  ],
   "type": "module",
-  "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

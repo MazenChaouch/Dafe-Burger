@@ -1,35 +1,30 @@
 /**
- * Tiny global state store for client-side interactivity.
- * Astro components can import this in their <script> tags
- * to share and react to state changes.
+ * Generic store factory to create independent pieces of state.
  */
+function createStore(initialState = false) {
+  let _isOpen = initialState;
+  const _listeners: Set<(isOpen: boolean) => void> = new Set();
 
-type Listener = (isOpen: boolean) => void;
-type Unsubscribe = () => void;
+  return {
+    get isOpen(): boolean {
+      return _isOpen;
+    },
+    toggle(): void {
+      _isOpen = !_isOpen;
+      _listeners.forEach((fn) => fn(_isOpen));
+    },
+    set(value: boolean): void {
+      _isOpen = value;
+      _listeners.forEach((fn) => fn(_isOpen));
+    },
+    subscribe(fn: (isOpen: boolean) => void) {
+      _listeners.add(fn);
+      fn(_isOpen); // Fire immediately with current state
+      return () => _listeners.delete(fn);
+    },
+  };
+}
 
-let _isOpen = false;
-const _listeners: Set<Listener> = new Set();
-
-export const store = {
-  get isOpen(): boolean {
-    return _isOpen;
-  },
-
-  toggle(): void {
-    _isOpen = !_isOpen;
-    _listeners.forEach((fn) => fn(_isOpen));
-  },
-
-  /**
-   * Subscribe to state changes.
-   * The listener fires only when the state CHANGES — NOT on initial subscription.
-   * Components that need initial-state setup should do so directly via CSS
-   * (e.g. el.style.transform) before any GSAP animations run, to avoid
-   * conflicting with their entrance animations.
-   * @returns An unsubscribe function — call it to stop receiving updates.
-   */
-  subscribe(fn: Listener): Unsubscribe {
-    _listeners.add(fn);
-    return () => _listeners.delete(fn);
-  },
-};
+// Independent stores for different UI parts
+export const menuStore = createStore(false);
+export const burgerStore = createStore(false);

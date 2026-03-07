@@ -1,5 +1,7 @@
 ---
+import { ViewTransitions } from "astro:transitions";
 import { SITE_CONFIG } from "../config/site";
+import LoadingScreen from "../components/LoadingScreen.astro";
 
 interface Props {
   title?: string;
@@ -21,8 +23,41 @@ import "../styles/global.css";
     <meta name="theme-color" content="#FF0000" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
+    <LoadingScreen />
     <slot />
   </body>
 </html>
+
+<style is:global>
+  /* ── Page transition animation ── */
+  ::view-transition-old(root) {
+    animation: page-fade-out 0.3s ease-in forwards;
+  }
+  ::view-transition-new(root) {
+    animation: page-fade-in 0.35s ease-out both;
+  }
+
+  @keyframes page-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes page-fade-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+</style>

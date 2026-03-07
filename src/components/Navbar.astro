@@ -4,7 +4,7 @@ import { NAV_LINKS } from "../config/navigation";
 
 <nav
   id="site-nav"
-  class="fixed top-8 left-1/2 z-100 flex w-7xl -translate-x-1/2 items-center justify-between px-8 py-5"
+  class="fixed top-6 left-1/2 z-100 flex w-340 -translate-x-1/2 items-center justify-between rounded-4xl px-8 py-4"
 >
   <!-- Title -->
   <a
@@ -65,178 +65,210 @@ import { NAV_LINKS } from "../config/navigation";
 
 <script>
   import gsap from "gsap";
-  import { store } from "../store";
+  import { menuStore } from "../store";
 
-  // ── Scope all selectors to the nav element to be safe if component
-  //    is ever rendered multiple times or alongside other navs.
-  const nav = document.querySelector<HTMLElement>("#site-nav")!;
-  const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn")!;
-  const menuOverlay = document.querySelector<HTMLElement>("#menu-overlay")!;
-  const menuLinks = menuOverlay.querySelectorAll<HTMLElement>(".menu-link");
-  const lineTop = nav.querySelector<SVGLineElement>(".menu-line-top")!;
-  const lineMid = nav.querySelector<SVGLineElement>(".menu-line-mid")!;
-  const lineBot = nav.querySelector<SVGLineElement>(".menu-line-bot")!;
-  const titleBurger = nav.querySelector<HTMLElement>("#title-burger")!;
-  const dotNavigator = document.getElementById("dot-navigator");
+  document.addEventListener("astro:page-load", () => {
+    // ── Scope all selectors to the nav element to be safe if component
+    //    is ever rendered multiple times or alongside other navs.
+    const nav = document.querySelector<HTMLElement>("#site-nav")!;
+    const menuBtn = document.querySelector<HTMLButtonElement>("#menu-btn")!;
+    const menuOverlay = document.querySelector<HTMLElement>("#menu-overlay")!;
+    const menuLinks = menuOverlay.querySelectorAll<HTMLElement>(".menu-link");
+    const lineTop = nav.querySelector<SVGLineElement>(".menu-line-top")!;
+    const lineMid = nav.querySelector<SVGLineElement>(".menu-line-mid")!;
+    const lineBot = nav.querySelector<SVGLineElement>(".menu-line-bot")!;
+    const titleBurger = nav.querySelector<HTMLElement>("#title-burger")!;
+    const dotNavigator = document.getElementById("dot-navigator");
 
-  let isMenuOpen = false;
+    let isMenuOpen = false;
+    let menuTl: gsap.core.Timeline | null = null;
 
-  menuBtn.addEventListener("click", () => {
-    store.toggle();
-    isMenuOpen = store.isOpen;
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menuStore.toggle();
+      isMenuOpen = menuStore.isOpen;
 
-    // Keep aria-expanded in sync with visual state
-    menuBtn.setAttribute("aria-expanded", String(isMenuOpen));
-    menuBtn.setAttribute(
-      "aria-label",
-      isMenuOpen ? "Close navigation menu" : "Open navigation menu",
-    );
-
-    // Get the exact centre coordinate of the button for the clip-path origin
-    const rect = menuBtn.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-
-    if (isMenuOpen) {
-      // ── Open Menu ──
-      gsap.set(menuOverlay, {
-        opacity: 1,
-        pointerEvents: "auto",
-        clipPath: `circle(0px at ${x}px ${y}px)`,
-      });
-
-      const tl = gsap.timeline();
-
-      tl.to(menuOverlay, {
-        clipPath: `circle(150% at ${x}px ${y}px)`,
-        duration: 0.8,
-        ease: "expo.inOut",
-      });
-
-      tl.to(
-        menuLinks,
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.4,
-          stagger: 0.1,
-          ease: "back.out(1.7)",
-        },
-        "-=0.3",
+      // Keep aria-expanded in sync with visual state
+      menuBtn.setAttribute("aria-expanded", String(isMenuOpen));
+      menuBtn.setAttribute(
+        "aria-label",
+        isMenuOpen ? "Close navigation menu" : "Open navigation menu",
       );
 
-      if (dotNavigator) {
-        gsap.to(dotNavigator, {
-          opacity: 0,
-          pointerEvents: "none",
-          duration: 0.3,
-          delay: 0.3,
-        });
-      }
+      // Get the exact centre coordinate of the button for the clip-path origin
+      const rect = menuBtn.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
 
-      // Morph hamburger → X
-      gsap.to(menuBtn, {
-        backgroundColor: "#000000",
-        duration: 0.4,
-        delay: 0.3,
-      });
-      gsap.to([lineTop, lineMid, lineBot], {
-        stroke: "#fbbf24",
-        duration: 0.4,
-        delay: 0.3,
-      });
+      // Kill any running menu timeline to prevent delayed onComplete callbacks from breaking the UI state
+      if (menuTl) menuTl.kill();
 
-      gsap.to(lineTop, {
-        y: 6,
-        rotation: 45,
-        transformOrigin: "center",
-        duration: 0.4,
-        ease: "power2.inOut",
-      });
-      gsap.to(lineMid, { opacity: 0, duration: 0.2 });
-      gsap.to(lineBot, {
-        y: -6,
-        rotation: -45,
-        transformOrigin: "center",
-        duration: 0.4,
-        ease: "power2.inOut",
-      });
-
-      // 'burger' text → black (contrasts yellow overlay)
-      gsap.to(titleBurger, {
-        color: "#000000",
-        duration: 0.4,
-        delay: 0.5,
-        ease: "power2.inOut",
-      });
-    } else {
-      // ── Close Menu ──
-      const tl = gsap.timeline({
-        onComplete: () => {
-          gsap.set(menuOverlay, { opacity: 0, pointerEvents: "none" });
-        },
-      });
-
-      tl.to(menuLinks, {
-        opacity: 0,
-        y: -10,
-        duration: 0.3,
-        stagger: -0.05,
-        ease: "power2.in",
-      });
-
-      tl.to(
-        menuOverlay,
-        {
-          clipPath: `circle(0px at ${x}px ${y}px)`,
-          duration: 0.7,
-          ease: "power3.inOut",
-        },
-        "-=0.1",
-      );
-
-      // Morph X → hamburger
-      if (dotNavigator) {
-        gsap.to(dotNavigator, {
+      if (isMenuOpen) {
+        // ── Open Menu ──
+        gsap.set(menuOverlay, {
           opacity: 1,
           pointerEvents: "auto",
+          clipPath: `circle(0px at ${x}px ${y}px)`,
+        });
+
+        menuTl = gsap.timeline();
+
+        menuTl.to(menuOverlay, {
+          clipPath: `circle(150% at ${x}px ${y}px)`,
+          duration: 0.8,
+          ease: "expo.inOut",
+          overwrite: "auto",
+        });
+
+        menuTl.to(
+          menuLinks,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: "back.out(1.7)",
+            overwrite: "auto",
+          },
+          "-=0.3",
+        );
+
+        if (dotNavigator) {
+          gsap.to(dotNavigator, {
+            opacity: 0,
+            pointerEvents: "none",
+            duration: 0.3,
+            delay: 0.3,
+            overwrite: "auto",
+          });
+        }
+
+        // Morph hamburger → X
+        gsap.to(menuBtn, {
+          backgroundColor: "#000000",
+          duration: 0.4,
+          delay: 0.1,
+          overwrite: "auto",
+        });
+        gsap.to([lineTop, lineMid, lineBot], {
+          stroke: "#fbbf24",
+          duration: 0.4,
+          delay: 0.1,
+          overwrite: "auto",
+        });
+
+        gsap.to(lineTop, {
+          y: 6,
+          rotation: 45,
+          transformOrigin: "center",
+          duration: 0.4,
+          ease: "power2.inOut",
+          overwrite: "auto",
+        });
+        gsap.to(lineMid, { opacity: 0, duration: 0.2, overwrite: "auto" });
+        gsap.to(lineBot, {
+          y: -6,
+          rotation: -45,
+          transformOrigin: "center",
+          duration: 0.4,
+          ease: "power2.inOut",
+          overwrite: "auto",
+        });
+
+        // 'burger' text → black (contrasts yellow overlay)
+        gsap.to(titleBurger, {
+          color: "#000000",
+          duration: 0.4,
+          delay: 0.2,
+          ease: "power2.inOut",
+          overwrite: "auto",
+        });
+      } else {
+        // ── Close Menu ──
+        menuTl = gsap.timeline({
+          onComplete: () => {
+            gsap.set(menuOverlay, { opacity: 0, pointerEvents: "none" });
+          },
+        });
+
+        menuTl.to(menuLinks, {
+          opacity: 0,
+          y: -10,
           duration: 0.3,
-          delay: 0.4,
+          stagger: -0.05,
+          ease: "power2.in",
+          overwrite: "auto",
+        });
+
+        menuTl.to(
+          menuOverlay,
+          {
+            clipPath: `circle(0px at ${x}px ${y}px)`,
+            duration: 0.7,
+            ease: "power3.inOut",
+            overwrite: "auto",
+          },
+          "-=0.1",
+        );
+
+        // Morph X → hamburger
+        if (dotNavigator) {
+          gsap.to(dotNavigator, {
+            opacity: 1,
+            pointerEvents: "auto",
+            duration: 0.3,
+            delay: 0.4,
+            overwrite: "auto",
+          });
+        }
+
+        gsap.to(menuBtn, {
+          backgroundColor: "#facc15",
+          duration: 0.4,
+          overwrite: "auto",
+        });
+        gsap.to([lineTop, lineMid, lineBot], {
+          stroke: "#000000",
+          duration: 0.4,
+          overwrite: "auto",
+        });
+
+        gsap.to([lineTop, lineMid, lineBot], {
+          y: 0,
+          rotation: 0,
+          opacity: 1,
+          transformOrigin: "center",
+          duration: 0.4,
+          ease: "power2.inOut",
+          overwrite: "auto",
+        });
+
+        // 'burger' text → yellow
+        gsap.to(titleBurger, {
+          color: "#facc15",
+          duration: 0.4,
+          delay: 0.1,
+          ease: "power2.inOut",
+          overwrite: "auto",
         });
       }
+    });
 
-      gsap.to(menuBtn, { backgroundColor: "#facc15", duration: 0.4 });
-      gsap.to([lineTop, lineMid, lineBot], {
-        stroke: "#000000",
-        duration: 0.4,
-      });
-
-      gsap.to([lineTop, lineMid, lineBot], {
-        y: 0,
-        rotation: 0,
-        opacity: 1,
-        transformOrigin: "center",
-        duration: 0.4,
-        ease: "power2.inOut",
-      });
-
-      // 'burger' text → yellow
-      gsap.to(titleBurger, {
-        color: "#facc15",
-        duration: 0.4,
-        delay: 0.1,
-        ease: "power2.inOut",
-      });
-    }
-  });
-
-  // Close the menu automatically when a link inside it is clicked
-  const itemLinks = menuOverlay.querySelectorAll(".menu-item-link");
-  itemLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      if (isMenuOpen) {
-        menuBtn.click();
+    // Ensure menu closes if user navigates away (important for View Transitions)
+    document.addEventListener("astro:before-swap", () => {
+      if (menuStore.isOpen) {
+        menuStore.toggle();
       }
+    });
+
+    // Close the menu automatically when a link inside it is clicked
+    const itemLinks = menuOverlay.querySelectorAll(".menu-item-link");
+    itemLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        if (isMenuOpen) {
+          menuBtn.click();
+        }
+      });
     });
   });
 </script>

@@ -1,0 +1,113 @@
+---
+/**
+ * LoadingScreen — only visible on the very first page load.
+ * Hidden by default via CSS. Shown by inline script only when needed.
+ */
+---
+
+<div
+  id="loading-screen"
+  class="fixed inset-0 z-9999 hidden items-center justify-center overflow-hidden bg-black"
+>
+  <div class="loader-content flex flex-col items-center gap-8 opacity-0">
+    <div class="loader-logo flex flex-col leading-none">
+      <span
+        class="loader-dafe translate-y-5 text-[clamp(2rem,6vw,5rem)] font-black tracking-[0.05em] text-yellow-400 opacity-0"
+        >Dafe's</span
+      >
+      <span
+        class="loader-burger -mt-1 ml-4 translate-y-5 text-[clamp(2rem,6vw,5rem)] font-black tracking-[0.05em] text-white opacity-0"
+        >burger</span
+      >
+    </div>
+    <div
+      class="loader-bar-track h-0.75 w-50 overflow-hidden rounded-full bg-white/10 opacity-0"
+    >
+      <div class="loader-bar-fill h-full w-0 rounded-full bg-yellow-400"></div>
+    </div>
+    <p
+      class="loader-tagline translate-y-2.5 text-[0.85rem] font-semibold tracking-[0.2em] text-white/30 uppercase opacity-0"
+    >
+      Handcrafted in Tunis 🇹🇳
+    </p>
+  </div>
+</div>
+
+<!--
+  Inline script runs synchronously right after the element.
+  Shows the loader ONLY on first visit. On navigations, it stays hidden.
+-->
+<script is:inline>
+  (function () {
+    var el = document.getElementById("loading-screen");
+    if (!el) return;
+    if (window.__loaderPlayed) {
+      el.parentNode.removeChild(el);
+    } else {
+      el.classList.remove("hidden");
+      el.classList.add("flex");
+    }
+  })();
+</script>
+
+<script>
+  import gsap from "gsap";
+
+  const screen = document.getElementById("loading-screen");
+  const win = window as Window & {
+    __loaderPlayed?: boolean;
+    __loaderDone?: boolean;
+  };
+
+  if (screen && !win.__loaderPlayed) {
+    // First visit — play animation
+    win.__loaderPlayed = true;
+    document.body.style.overflow = "hidden";
+
+    const content = screen.querySelector<HTMLElement>(".loader-content")!;
+    const dafe = screen.querySelector<HTMLElement>(".loader-dafe")!;
+    const burger = screen.querySelector<HTMLElement>(".loader-burger")!;
+    const barTrack = screen.querySelector<HTMLElement>(".loader-bar-track")!;
+    const barFill = screen.querySelector<HTMLElement>(".loader-bar-fill")!;
+    const tagline = screen.querySelector<HTMLElement>(".loader-tagline")!;
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        document.body.style.overflow = "";
+        screen.remove();
+        win.__loaderDone = true;
+        document.dispatchEvent(new CustomEvent("loader:complete"));
+      },
+    });
+
+    tl.to(content, { opacity: 1, duration: 0.1 });
+    tl.to(dafe, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
+    tl.to(
+      burger,
+      { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" },
+      "-=0.4",
+    );
+    tl.to(barTrack, { opacity: 1, duration: 0.2 }, "-=0.2");
+    tl.to(barFill, { width: "100%", duration: 0.8, ease: "power2.inOut" });
+    tl.to(
+      tagline,
+      { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" },
+      "-=0.5",
+    );
+    tl.to({}, { duration: 0.3 });
+    tl.to(content, { scale: 1.2, opacity: 0, duration: 0.5, ease: "expo.in" });
+    tl.to(
+      screen,
+      {
+        clipPath: "circle(0% at 50% 50%)",
+        duration: 0.7,
+        ease: "expo.inOut",
+      },
+      "-=0.3",
+    );
+  } else {
+    // Subsequent navigation — fire event immediately for page animations
+    win.__loaderDone = true;
+    document.dispatchEvent(new CustomEvent("loader:complete"));
+  }
+</script>

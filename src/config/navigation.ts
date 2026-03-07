@@ -12,4 +12,5 @@ export const HOME_SECTIONS = [
   { id: "slide-4", label: "Menu Preview" },
   { id: "slide-5", label: "Location" },
   { id: "slide-6", label: "Reviews" },
+  { id: "site-footer", label: "Footer" },
 ] as const;

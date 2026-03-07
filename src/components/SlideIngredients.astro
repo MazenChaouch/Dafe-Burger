@@ -10,8 +10,7 @@ import patty from "../assets/burger/meat.png";
 
 <section
   id="slide-3"
-  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden"
-  style="background: radial-gradient(ellipse at center, #4CAF50 0%, #1B5E20 60%);"
+  class="snap-section relative flex h-screen w-full shrink-0 snap-start items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_center,#4CAF50_0%,#1B5E20_60%)]"
 >
   <!-- Decorative vertical text -->
   <p
@@ -78,38 +77,32 @@ import patty from "../assets/burger/meat.png";
     class="pointer-events-none absolute inset-0 overflow-hidden"
   >
     <div
-      class="ingredient-float absolute top-[15%] left-[22%] w-[12vw] opacity-80"
-      style="animation: floatA 6s ease-in-out infinite;"
+      class="ingredient-float absolute top-[15%] left-[22%] w-[12vw] animate-[floatA_6s_ease-in-out_infinite] opacity-80"
     >
       <Image src={tomato} alt="" class="w-full object-contain blur-[2px]" />
     </div>
     <div
-      class="ingredient-float absolute top-[25%] right-[20%] w-[15vw] opacity-70"
-      style="animation: floatB 7s ease-in-out infinite;"
+      class="ingredient-float absolute top-[25%] right-[20%] w-[15vw] animate-[floatB_7s_ease-in-out_infinite] opacity-70"
     >
       <Image src={lettuce} alt="" class="w-full object-contain blur-[1px]" />
     </div>
     <div
-      class="ingredient-float absolute bottom-[20%] left-[18%] w-[14vw] opacity-75"
-      style="animation: floatA 8s ease-in-out 1s infinite;"
+      class="ingredient-float absolute bottom-[20%] left-[18%] w-[14vw] animate-[floatA_8s_ease-in-out_1s_infinite] opacity-75"
     >
       <Image src={onions} alt="" class="w-full object-contain blur-[2px]" />
     </div>
     <div
-      class="ingredient-float absolute right-[22%] bottom-[15%] w-[13vw] opacity-85"
-      style="animation: floatB 5s ease-in-out 0.5s infinite;"
+      class="ingredient-float absolute right-[22%] bottom-[15%] w-[13vw] animate-[floatB_5s_ease-in-out_0.5s_infinite] opacity-85"
     >
       <Image src={cheese} alt="" class="w-full object-contain blur-[1px]" />
     </div>
     <div
-      class="ingredient-float absolute top-[55%] left-[12%] w-[16vw] opacity-60"
-      style="animation: floatB 6.5s ease-in-out 1.5s infinite;"
+      class="ingredient-float absolute top-[55%] left-[12%] w-[16vw] animate-[floatB_6.5s_ease-in-out_1.5s_infinite] opacity-60"
     >
       <Image src={patty} alt="" class="w-full object-contain blur-[3px]" />
     </div>
     <div
-      class="ingredient-float absolute top-[60%] right-[15%] w-[10vw] opacity-90"
-      style="animation: floatA 9s ease-in-out 2s infinite;"
+      class="ingredient-float absolute top-[60%] right-[15%] w-[10vw] animate-[floatA_9s_ease-in-out_2s_infinite] opacity-90"
     >
       <Image
         src={tomato}
@@ -119,24 +112,3 @@ import patty from "../assets/burger/meat.png";
     </div>
   </div>
 </section>
-
-<style>
-  @keyframes floatA {
-    0%,
-    100% {
-      transform: translateY(0px) rotate(-5deg);
-    }
-    50% {
-      transform: translateY(-30px) rotate(5deg);
-    }
-  }
-  @keyframes floatB {
-    0%,
-    100% {
-      transform: translateY(0px) rotate(8deg);
-    }
-    50% {
-      transform: translateY(-25px) rotate(-8deg);
-    }
-  }
-</style>

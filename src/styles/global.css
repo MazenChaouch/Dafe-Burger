@@ -1,4 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
+
+/* ── Google Font (Inter) ── */
 
 /* ── Base reset & typography ── */
 @layer base {
@@ -23,6 +26,8 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: #000;
+    color: #fff;
   }
 
   /* Respect user motion preferences for entrance/bounce animations */
@@ -34,5 +39,38 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+
+  /* Smooth scroll-snap container */
+  .scroll-container {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Each snap section eases into place instead of hard-locking */
+  .snap-section,
+  #site-footer {
+    scroll-snap-stop: always;
+  }
+}
+
+/* ── Custom Component Animations ── */
+@keyframes floatA {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(5deg);
+  }
+}
+@keyframes floatB {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(8deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(-8deg);
   }
 }
