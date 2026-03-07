@@ -1,4 +1,4 @@
-# Astro Starter Kit: Basics
+# Dafe-Burger-shop
 
 ```sh
 npm create astro@latest -- --template basics
