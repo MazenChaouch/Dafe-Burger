@@ -1,0 +1,20 @@
+---
+import { HOME_SECTIONS } from "../config/navigation";
+---
+
+<div
+  id="dot-navigator"
+  class="fixed top-1/2 left-12 z-50 flex -translate-y-1/2 flex-col gap-6 rounded-full bg-black/10 px-6 py-8 shadow-sm inset-shadow-sm shadow-yellow-400 inset-shadow-yellow-400 backdrop-blur-sm transition-opacity duration-300"
+>
+  {
+    HOME_SECTIONS.map((section, index) => (
+      <a
+        href={`#${section.id}`}
+        class={`nav-dot h-3 w-3 rounded-full border border-yellow-400 shadow-sm shadow-yellow-400 transition-all duration-300 ${
+          index === 0 ? "scale-125 bg-yellow-400" : "scale-100 bg-transparent"
+        }`}
+        aria-label={section.label}
+      />
+    ))
+  }
+</div>

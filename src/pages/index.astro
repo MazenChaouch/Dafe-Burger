@@ -7,38 +7,13 @@ import Burger from "../components/Burger.astro";
 import SlideMenu from "../components/SlideMenu.astro";
 import SlideLocation from "../components/SlideLocation.astro";
 import SlideTestimonials from "../components/SlideTestimonials.astro";
+import DotNavigator from "../components/DotNavigator.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 ---
 
 <Layout>
   <Navbar />
-
-  <!-- Dot Navigation -->
-  <div
-    id="dot-navigator"
-    class="fixed top-1/2 left-12 z-50 flex -translate-y-1/2 flex-col gap-6 rounded-full bg-black/10 px-6 py-8 shadow-xs inset-shadow-xs shadow-yellow-400 inset-shadow-yellow-400 backdrop-blur-sm transition-opacity duration-300"
-  >
-    <a
-      href="#slide-1"
-      class="nav-dot h-3 w-3 scale-125 rounded-full border border-yellow-400 bg-yellow-400"
-      aria-label="Home"></a>
-    <a
-      href="#slide-2"
-      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
-      aria-label="About Us"></a>
-    <a
-      href="#slide-4"
-      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
-      aria-label="Menu Preview"></a>
-    <a
-      href="#slide-5"
-      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
-      aria-label="Location"></a>
-    <a
-      href="#slide-6"
-      class="nav-dot h-3 w-3 scale-100 rounded-full border border-yellow-400 bg-transparent"
-      aria-label="Reviews"></a>
-  </div>
+  <DotNavigator />
 
   <div
     class="scroll-container h-screen w-full snap-y snap-mandatory overflow-x-hidden overflow-y-auto scroll-smooth"
@@ -212,8 +187,8 @@ import SiteFooter from "../components/SiteFooter.astro";
               target,
               { paddingTop: "4rem", paddingBottom: "4rem" },
               {
-                paddingTop: "13rem",
-                paddingBottom: "16rem",
+                paddingTop: "10rem",
+                paddingBottom: "14rem",
                 duration: 1.5,
                 ease: "expo.out",
                 overwrite: true,

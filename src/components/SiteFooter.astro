@@ -1,4 +1,6 @@
 ---
+import { SITE_CONFIG } from "../config/site";
+import { NAV_LINKS } from "../config/navigation";
 // Footer – last item in the scroll container
 ---
 
@@ -13,24 +15,25 @@
     <div class="grid grid-cols-4 gap-12">
       <!-- Brand -->
       <div class="col-span-2 flex flex-col gap-6">
-        <div class="flex flex-col leading-none">
+        <a
+          href="/"
+          class="flex flex-col leading-none transition-opacity hover:opacity-80"
+        >
           <span
             class="text-4xl font-black tracking-wide text-yellow-400 md:text-6xl"
-            >Dafe's</span
+            >{SITE_CONFIG.name.split("'")[0]}'s</span
           >
           <span
             class="-mt-1 ml-4 text-4xl font-black tracking-wide text-white md:ml-8 md:text-6xl"
             >burger</span
           >
-        </div>
+        </a>
         <p class="max-w-md text-base leading-relaxed text-white/60">
-          Bold, juicy burgers made with passion in the heart of Tunis. Every
-          patty hand-pressed daily. Every sauce mixed in-house. This is a love
-          letter to good food.
+          {SITE_CONFIG.description}
         </p>
         <div class="mt-2 flex gap-4">
           <a
-            href="https://instagram.com/dafesburger"
+            href={SITE_CONFIG.socials.instagram}
             aria-label="Instagram"
             class="flex size-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-yellow-400 hover:text-yellow-400"
           >
@@ -41,7 +44,7 @@
             >
           </a>
           <a
-            href="https://tiktok.com/@dafesburger"
+            href={SITE_CONFIG.socials.tiktok}
             aria-label="TikTok"
             class="flex size-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-yellow-400 hover:text-yellow-400"
           >
@@ -52,7 +55,7 @@
             >
           </a>
           <a
-            href="https://wa.me/21671123456"
+            href={SITE_CONFIG.socials.whatsapp}
             aria-label="WhatsApp"
             class="flex size-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition hover:border-yellow-400 hover:text-yellow-400"
           >
@@ -72,13 +75,7 @@
         </h3>
         <nav class="flex flex-col gap-2">
           {
-            [
-              { label: "Home", href: "/#slide-1" },
-              { label: "Our Menu", href: "/menu" },
-              { label: "About Us", href: "/about" },
-              { label: "Location", href: "/#slide-5" },
-              { label: "Reviews", href: "/#slide-6" },
-            ].map((l) => (
+            NAV_LINKS.map((l) => (
               <a
                 href={l.href}
                 class="text-sm text-white/50 transition hover:text-yellow-400"
@@ -98,19 +95,21 @@
         <div class="flex flex-col gap-3 text-sm text-white/50">
           <p class="flex items-start gap-2">
             <span class="mt-0.5">📍</span>
-            <span>42 Av. Habib Bourguiba<br />Tunis 1000, Tunisia</span>
+            <span>{SITE_CONFIG.contact.address}</span>
           </p>
           <a
-            href="tel:+21671123456"
+            href={`tel:${SITE_CONFIG.contact.phone}`}
             class="flex items-center gap-2 transition hover:text-yellow-400"
           >
-            <span>📞</span> +216 71 123 456
+            <span>📞</span>
+            {SITE_CONFIG.contact.phone}
           </a>
           <a
-            href="mailto:hello@dafesburger.tn"
+            href={`mailto:${SITE_CONFIG.contact.email}`}
             class="flex items-center gap-2 transition hover:text-yellow-400"
           >
-            <span>✉️</span> hello@dafesburger.tn
+            <span>✉️</span>
+            {SITE_CONFIG.contact.email}
           </a>
           <p class="flex items-center gap-2">
             <span>🕐</span> Open daily 11:00 – 23:00
