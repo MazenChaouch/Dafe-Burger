@@ -14,8 +14,33 @@ const {
   title = SITE_CONFIG.name,
   description = SITE_CONFIG.description,
   image = SITE_CONFIG.ogImage,
-  url = SITE_CONFIG.url,
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE_CONFIG.url);
+
+// Generate JSON-LD Structured Data
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: SITE_CONFIG.name,
+  image: new URL(SITE_CONFIG.ogImage, SITE_CONFIG.url).toString(),
+  description: SITE_CONFIG.description,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE_CONFIG.contact.address.split(",")[0].trim(),
+    addressLocality:
+      SITE_CONFIG.contact.address.split(",")[1]?.trim() || "Tunis",
+    addressCountry: "TN",
+  },
+  telephone: SITE_CONFIG.contact.phone,
+  url: SITE_CONFIG.url,
+  servesCuisine: "Burgers",
+  sameAs: [
+    SITE_CONFIG.socials.instagram,
+    SITE_CONFIG.socials.facebook,
+    SITE_CONFIG.socials.tiktok,
+  ],
+};
 
 import "../styles/global.css";
 ---
@@ -28,25 +53,37 @@ import "../styles/global.css";
     <meta name="description" content={description} />
     <meta name="theme-color" content={SITE_CONFIG.themeColor} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title}</title>
+    <title>
+      {title === SITE_CONFIG.name ? title : `${title} | ${SITE_CONFIG.name}`}
+    </title>
+
+    {/* Keyword / Author */}
+    <meta name="author" content={SITE_CONFIG.name} />
+    <meta
+      name="keywords"
+      content="Burger, Tunis, Premium Burger, Fast Food, Dafe's Burger, Restaurant, Food"
+    />
 
     {/* Open Graph / Facebook */}
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={url} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, url)} />
+    <meta property="og:image" content={new URL(image, canonicalURL)} />
 
     {/* Twitter */}
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={url} />
+    <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, url)} />
+    <meta property="twitter:image" content={new URL(image, canonicalURL)} />
 
     {/* Search Engine Optimization */}
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={url} />
+    <link rel="canonical" href={canonicalURL} />
+
+    {/* Structured Data */}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <ViewTransitions />
   </head>
