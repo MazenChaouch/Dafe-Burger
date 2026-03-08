@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
   name: "Dafe's Burger",
   description: "Dafe's Burger — fresh ingredients, unbeatable flavor. The best premium burger experience in Tunis.",
-  url: "https://dafesburger.tn", // Replace with actual URL
+  url: "https://dafe-burger.netlify.app", // Replace with actual URL
   ogImage: "/og-image.png",
   themeColor: "#FF0000",
   contact: {
