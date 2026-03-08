@@ -7,12 +7,14 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  url?: string;
 }
 
 const {
   title = SITE_CONFIG.name,
   description = SITE_CONFIG.description,
   image = SITE_CONFIG.ogImage,
+  url = SITE_CONFIG.url,
 } = Astro.props;
 
 import "../styles/global.css";
@@ -30,21 +32,21 @@ import "../styles/global.css";
 
     {/* Open Graph / Facebook */}
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL(image, Astro.url)} />
+    <meta property="og:image" content={new URL(image, url)} />
 
     {/* Twitter */}
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:url" content={url} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+    <meta property="twitter:image" content={new URL(image, url)} />
 
     {/* Search Engine Optimization */}
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href={Astro.url} />
+    <link rel="canonical" href={url} />
 
     <ViewTransitions />
   </head>
